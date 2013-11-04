@@ -62,11 +62,11 @@ class DataBase
                 $distance = DataBase::distance(floatval($lat), floatval($lon), floatval($d['lat']), floatval($d['lon']));
                 if($distance <= $radius)
                 {
-
-                    $messages[] = array_merge((new Message(array('user' => $this->selectUser($d['user_id']),
-                                                    'device' => $this->selectDevice($d['device_id']),
-                                                    'lat' => $d['lat'], 'lon' => $d['lon'], 'datetime' => $d['datetime'],
-                                                    'mime' => $d['mime'], 'file' => $settings[Settings::WEBSITE].$d['file'], 'message' => $d['message'])))->getInfo(), array('distance' => $distance));
+                    $message = new Message(array('user' => $this->selectUser($d['user_id']),
+                        'device' => $this->selectDevice($d['device_id']),
+                        'lat' => $d['lat'], 'lon' => $d['lon'], 'datetime' => $d['datetime'],
+                        'mime' => $d['mime'], 'file' => $settings[Settings::WEBSITE].$d['file'], 'message' => $d['message']));
+                    $messages[] = array_merge($message->getInfo(), array('distance' => $distance));
                     $distances[] = $distance;
                     if(++$i > $nb)
                         break;
@@ -95,8 +95,9 @@ class DataBase
             if(!file_exists($folder))
                 mkdir($folder, 0730, true);
 
-            $filePath = $folder.uniqid().'.'.strtolower(substr(strrchr($message->getFile()['name'], '.'),1));
-            if(move_uploaded_file($message->getFile()['tmp_name'], $filePath))
+            $msg_file = $message->getFile();
+            $filePath = $folder.uniqid().'.'.strtolower(substr(strrchr($msg_file['name'], '.'),1));
+            if(move_uploaded_file($msg_file['tmp_name'], $filePath))
                 $message->setFile($filePath);
             else
                 return DataBase::errorCode(505);

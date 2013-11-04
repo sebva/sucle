@@ -30,7 +30,8 @@ if(isset($_POST['token'], $_POST['device_id'], $_POST['lat'], $_POST['lon'], $_P
         $message->setFile($file);
     }
 
-    echo (new DataBase())->sendMessage($_POST['token'], $_POST['device_id'], $message);
+    $db = new DataBase();
+    echo $db->sendMessage($_POST['token'], $_POST['device_id'], $message);
 }
 else
     die(DataBase::errorCode(401));
