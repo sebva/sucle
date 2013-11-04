@@ -14,11 +14,12 @@ if(isset($_POST['token'], $_POST['device_id'], $_POST['lat'], $_POST['lon'], $_P
         $file = $_FILES['file'];
         if($file['error'] > 0)
             die(DataBase::errorCode(402));
-        if($file['size'] > Settings::getSettings()[Settings::MAX_SIZE_FILE])
+        $settings = Settings::getSettings();
+        if($file['size'] > $settings[Settings::MAX_SIZE_FILE])
             die(DataBase::errorCode(403));
         $ok = false;
         $extension = strtolower(substr(strrchr($file['name'], '.'),1));
-        foreach(Settings::getSettings()[Settings::VALID_EXTENSION] as $c)
+        foreach($settings[Settings::VALID_EXTENSION] as $c)
             foreach($c as $k)
                 if($k == $extension)
                     $ok = true;

@@ -4,7 +4,6 @@ require_once('Settings.php');
 require_once('Model/Device.php');
 require_once('Model/User.php');
 require_once('Model/Message.php');
-require_once('Model/Social.php');
 require_once('Model/Token.php');
 
 class DataBase
@@ -42,29 +41,32 @@ class DataBase
     public function getMessages($lat, $lon, $radius, $nb=null)
     {
         if($nb == null)
-            $nb = Settings::getSettings()[Settings::DEFAULT_NB_MESSAGE];
-
+        {
+            $settings = Settings::getSettings();
+            $nb = $settings[Settings::DEFAULT_NB_MESSAGE];
+        }
         $q = $this->pdo->prepare('SELECT * FROM `message` ORDER BY `id` DESC');
         $q->execute();
 
-        $data = $q->fetch(PDO::FETCH_ASSOC);
+        $data = $q->fetchAll(PDO::FETCH_ASSOC);
         $q->closeCursor();
 
         $messages = array();
         $distances = array();
         $i = 0;
+        $settings = Settings::getSettings();
         if(is_array($data))
         {
             foreach($data as $d)
             {
-                $distance = DataBase::distance($lat, $lon, $d['lat'], $d['lon']);
+                $distance = DataBase::distance(floatval($lat), floatval($lon), floatval($d['lat']), floatval($d['lon']));
                 if($distance <= $radius)
                 {
 
                     $messages[] = array_merge((new Message(array('user' => $this->selectUser($d['user_id']),
                                                     'device' => $this->selectDevice($d['device_id']),
                                                     'lat' => $d['lat'], 'lon' => $d['lon'], 'datetime' => $d['datetime'],
-                                                    'mime' => $d['mime'], 'file' => $d['file'], 'message' => $d['message'])))->getInfo(), array('distance' => $distance));
+                                                    'mime' => $d['mime'], 'file' => $settings[Settings::WEBSITE].$d['file'], 'message' => $d['message'])))->getInfo(), array('distance' => $distance));
                     $distances[] = $distance;
                     if(++$i > $nb)
                         break;
@@ -81,14 +83,15 @@ class DataBase
         if(!$this->existsRelation($token, $device_id, $message))
             return DataBase::errorCode(400);
 
-        if(strlen(trim($message->getMessage())) > Settings::getSettings()[Settings::LEN_MESSAGE_MAX])
+        $settings = Settings::getSettings();
+        if(strlen(trim($message->getMessage())) > $settings[Settings::LEN_MESSAGE_MAX])
             return DataBase::errorCode(406);
         if(strlen(trim($message->getMessage())) == 0)
             return DataBase::errorCode(405);
 
         if($message->getFile() != null)
         {
-            $folder = Settings::getSettings()[Settings::UPLOAD].$message->getUser()->getId().'/';
+            $folder = $settings[Settings::UPLOAD].$message->getUser()->getId().'/';
             if(!file_exists($folder))
                 mkdir($folder, 0730, true);
 
@@ -105,16 +108,17 @@ class DataBase
     /*
      * Log in or sign up the user
      */
-    public function logIn($social_id, $type, $token, Device $device_input)
+    public function logIn($social_id, $type, $token_input, Device $device_input)
     {
-        if(!in_array($type, Settings::getSettings()[Settings::TYPE_SOCIAL]))
+        $settings = Settings::getSettings();
+        if(!in_array($type, $settings[Settings::TYPE_SOCIAL]))
             return DataBase::errorCode(407);
 
         $user_exists = false;
-        $user = $this->existsUser($social_id, $user_exists);
+        $user = $this->existsUser($social_id, $type, $user_exists);
 
         if(!$user_exists)
-            $user = new User(array('inscription' => date("Y-m-d H:i:s")));
+            $user = new User(array('inscription' => date("Y-m-d H:i:s"), 'social_id' => $social_id, 'type' => $type));
         $this->insertUpdateUser($user);
 
         if($user == null)
@@ -129,20 +133,13 @@ class DataBase
         if($device == null)
             return DataBase::errorCode(502);
 
-        $social_exists = false;
-        $social = $this->existsSocial($social_id, $type, $social_exists);
-        if(!$social_exists)
-            $social = new Social(array('user' => $user, 'social_id' => $social_id, 'type' => $type));
-        $this->insertUpdateSocial($social);
-
-        if($social == null)
-            return DataBase::errorCode(503);
-
         $token_exists = false;
-        $token_temp = new Token(array('social' => $social, 'device' => $device, 'token' => $token));
+        $token_temp = new Token(array('user' => $user, 'device' => $device, 'token' => $token_input));
         $token = $this->existsToken($token_temp, $token_exists);
         if(!$token_exists)
             $token = $token_temp;
+        else
+            $token->setToken($token_input);
         $this->insertUpdateToken($token);
 
         if($token == null)
@@ -157,7 +154,7 @@ class DataBase
 
     private function existsRelation($token, $device_id, Message &$message)
     {
-        $q = $this->pdo->prepare('SELECT `token`,`device`.`id` AS id_device, `social`.`user_id` AS id_user FROM `token` JOIN `device` ON `token`.`device_id` = `device`.`id` JOIN `social` ON `social`.`id` = `token`.`social_id`WHERE `device`.`device_id` = :device_id and `token` = :token');
+        $q = $this->pdo->prepare('SELECT `token`,`device`.`id` AS id_device, `token`.`user_id` AS id_user FROM `token` JOIN `device` ON `token`.`device_id` = `device`.`id` JOIN `user` ON `user`.`id` = `token`.`user_id`WHERE `device`.`device_id` = :device_id and `token` = :token');
         $q->bindParam(':device_id', $device_id, PDO::PARAM_STR);
         $q->bindParam(':token', $token, PDO::PARAM_STR);
         $q->execute();
@@ -177,31 +174,9 @@ class DataBase
 
     private function existsToken(Token &$token, &$res)
     {
-        $q = $this->pdo->prepare('SELECT `id`, `social_id` AS social, `device_id` AS device, `token` FROM `token` WHERE `social_id` = :social_id and `device_id` = :device_id and `token` = :token');
-        $q->bindParam(':social_id', $token->getSocial()->getId(), PDO::PARAM_INT);
+        $q = $this->pdo->prepare('SELECT `id`, `user_id` AS user, `device_id` AS device, `token` FROM `token` WHERE `user_id` = :user_id and `device_id` = :device_id');
+        $q->bindParam(':user_id', $token->getUser()->getId(), PDO::PARAM_INT);
         $q->bindParam(':device_id', $token->getDevice()->getId(), PDO::PARAM_INT);
-        $q->bindParam(':token', $token->getToken(), PDO::PARAM_STR);
-        $q->execute();
-
-        $data = $q->fetch(PDO::FETCH_ASSOC);
-        $q->closeCursor();
-
-        $res = is_array($data);
-        if($res)
-        {
-            $data['social'] = $this->selectSocial($data['social']);
-            $data['device'] = $this->selectDevice($data['device']);
-            return new Token($data);
-        }
-        else
-            return null;
-    }
-
-    private function existsSocial($social_id, $type, &$res)
-    {
-        $q = $this->pdo->prepare('SELECT `id`, `user_id` AS user, `social_id`, `type` FROM `social` WHERE `social_id` = :social_id and `type` = :type');
-        $q->bindParam(':social_id', $social_id, PDO::PARAM_STR);
-        $q->bindParam(':type', $type, PDO::PARAM_STR);
         $q->execute();
 
         $data = $q->fetch(PDO::FETCH_ASSOC);
@@ -211,7 +186,8 @@ class DataBase
         if($res)
         {
             $data['user'] = $this->selectUser($data['user']);
-            return new Social($data);
+            $data['device'] = $this->selectDevice($data['device']);
+            return new Token($data);
         }
         else
             return null;
@@ -230,10 +206,11 @@ class DataBase
         return $res ? new Device($data) : null;
     }
 
-    private function existsUser($social_id, &$res)
+    private function existsUser($social_id, $type, &$res)
     {
-        $q = $this->pdo->prepare('SELECT `user`.`id` AS id, `user`.`inscription` AS inscription FROM `user` JOIN `social` ON `user`.`id` = `social`.`user_id` WHERE `social`.`social_id` = :social_id');
+        $q = $this->pdo->prepare('SELECT * FROM `user` WHERE `social_id` = :social_id and `type` = :type');
         $q->bindParam(':social_id', $social_id, PDO::PARAM_INT);
+        $q->bindParam(':type', $type, PDO::PARAM_STR);
         $q->execute();
 
         $data = $q->fetch(PDO::FETCH_ASSOC);
@@ -257,19 +234,6 @@ class DataBase
         $q->closeCursor();
 
         return new User($data);
-    }
-
-    private function selectSocial($id)
-    {
-        $q = $this->pdo->prepare('SELECT `id`, `user_id` AS user, `social_id`, `type` FROM `social` WHERE `id` = :id');
-        $q->bindParam(':id', $id, PDO::PARAM_INT);
-        $q->execute();
-
-        $data = $q->fetch(PDO::FETCH_ASSOC);
-        $q->closeCursor();
-
-        $data['user'] = $this->selectUser($data['user']);
-        return new Social($data);
     }
 
     private function selectDevice($id)
@@ -311,36 +275,25 @@ class DataBase
         }
     }
 
-    private function insertUpdateSocial(Social &$social)
-    {
-        if($social->getId() == null)
-        {
-            $q = $this->pdo->prepare('INSERT INTO `social` VALUES(NULL, :user_id, :social_id, :type)');
-            $q->bindParam(':user_id', $social->getUser()->getId(), PDO::PARAM_INT);
-            $q->bindParam(':social_id', $social->getSocialId(), PDO::PARAM_STR);
-            $q->bindParam(':type', $social->getType(), PDO::PARAM_STR);
-            $q->execute();
-
-            $social->setId($this->pdo->lastInsertId());
-        }
-        //We never update !
-    }
-
     private function insertUpdateUser(User &$user)
     {
         if($user->getId() == null)
         {
-            $q = $this->pdo->prepare('INSERT INTO `user` VALUES(NULL, :inscription)');
+            $q = $this->pdo->prepare('INSERT INTO `user` VALUES(NULL, :inscription, :social_id, :type)');
             $q->bindParam(':inscription', $user->getInscription(), PDO::PARAM_STR);
+            $q->bindParam(':social_id', $user->getSocialId(), PDO::PARAM_INT);
+            $q->bindParam(':type', $user->getType(), PDO::PARAM_STR);
             $q->execute();
 
             $user->setId($this->pdo->lastInsertId());
         }
         else
         {
-            $q = $this->pdo->prepare('UPDATE `user` SET `inscription`=:inscription WHERE `id`=:id');
+            $q = $this->pdo->prepare('UPDATE `user` SET `inscription`=:inscription, `social_id` = :social_id, `type` = :type WHERE `id`=:id');
             $q->bindParam(':id', $user->getId(), PDO::PARAM_INT);
             $q->bindParam(':inscription', $user->getInscription(), PDO::PARAM_STR);
+            $q->bindParam(':social_id', $user->getSocialId(), PDO::PARAM_INT);
+            $q->bindParam(':type', $user->getType(), PDO::PARAM_STR);
             $q->execute();
         }
     }
@@ -349,8 +302,8 @@ class DataBase
     {
         if($token->getId() == null)
         {
-            $q = $this->pdo->prepare('INSERT INTO `token` VALUES(NULL, :social_id, :device_id, :token)');
-            $q->bindParam(':social_id', $token->getSocial()->getId(), PDO::PARAM_INT);
+            $q = $this->pdo->prepare('INSERT INTO `token` VALUES(NULL, :user_id, :device_id, :token)');
+            $q->bindParam(':user_id', $token->getUser()->getId(), PDO::PARAM_INT);
             $q->bindParam(':device_id', $token->getDevice()->getId(), PDO::PARAM_INT);
             $q->bindParam(':token', $token->getToken(), PDO::PARAM_STR);
             $q->execute();
@@ -359,8 +312,8 @@ class DataBase
         }
         else
         {
-            $q = $this->pdo->prepare('UPDATE `token` SET `social_id`=:social_id, `device_id`=:device_id ,`token`=:token WHERE `id`=:id');
-            $q->bindParam(':social_id', $token->getSocial()->getId(), PDO::PARAM_INT);
+            $q = $this->pdo->prepare('UPDATE `token` SET `user_id`=:user_id, `device_id`=:device_id ,`token`=:token WHERE `id`=:id');
+            $q->bindParam(':user_id', $token->getUser()->getId(), PDO::PARAM_INT);
             $q->bindParam(':device_id', $token->getDevice()->getId(), PDO::PARAM_INT);
             $q->bindParam(':token', $token->getToken(), PDO::PARAM_STR);
             $q->bindParam(':id', $token->getId(), PDO::PARAM_INT);

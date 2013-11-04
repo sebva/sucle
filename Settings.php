@@ -12,6 +12,7 @@ class Settings
     const VALID_EXTENSION = 'valid_extension';
     const DEFAULT_NB_MESSAGE = 'default_nb_message';
     const TYPE_SOCIAL = 'type_social';
+    const WEBSITE = 'website';
 
     public static function getSettings()
     {
@@ -20,6 +21,7 @@ class Settings
             self::USER => 'root',
             self::PASSWORD => '',
             self::DATABASE => 'sucle',
+            self::WEBSITE => 'http://localhost/public/',
             self::UPLOAD => 'uploads/',
             self::MAX_SIZE_FILE => 30*1024*1024,
             self::LEN_MESSAGE_MAX => 160,
