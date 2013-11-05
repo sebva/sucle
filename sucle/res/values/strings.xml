@@ -3,5 +3,7 @@
 
     <string name="app_name">Sucle</string>
     <string name="title_post_detail">Post Detail</string>
+    <string name="app_id">170038059858161</string>
+    <string name="login_title">Login</string>
 
 </resources>

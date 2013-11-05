@@ -1,9 +1,11 @@
 package ch.hearc.android.sucle;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 /**
  * An activity representing a list of Posts. This activity has different
  * presentations for handset and tablet-size devices. On handsets, the activity
@@ -19,7 +21,7 @@ import android.support.v4.app.FragmentActivity;
  * This activity also implements the required {@link PostListFragment.Callbacks}
  * interface to listen for item selections.
  */
-public class PostListActivity extends FragmentActivity implements PostListFragment.Callbacks
+public class PostsListFragment extends Fragment implements PostListFragment.Callbacks
 {
 
 	/**
@@ -27,14 +29,12 @@ public class PostListActivity extends FragmentActivity implements PostListFragme
 	 * device.
 	 */
 	private boolean	mTwoPane;
-
+	
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_post_list);
-
-		if (findViewById(R.id.post_detail_container) != null)
+		View view = inflater.inflate(R.layout.activity_post_list, container, false);
+		if (view.findViewById(R.id.post_detail_container) != null)
 		{
 			// The detail container view will be present only in the
 			// large-screen layouts (res/values-large and
@@ -44,12 +44,11 @@ public class PostListActivity extends FragmentActivity implements PostListFragme
 
 			// In two-pane mode, list items should be given the
 			// 'activated' state when touched.
-			((PostListFragment) getSupportFragmentManager().findFragmentById(R.id.post_list)).setActivateOnItemClick(true);
+			((PostListFragment) getFragmentManager().findFragmentById(R.id.postListFragment)).setActivateOnItemClick(true);
 		}
-
-		// TODO: If exposing deep links into your app, handle intents here.
+		return view;
 	}
-
+	
 	/**
 	 * Callback method from {@link PostListFragment.Callbacks} indicating that
 	 * the item with the given ID was selected.
@@ -66,14 +65,13 @@ public class PostListActivity extends FragmentActivity implements PostListFragme
 			arguments.putString(PostDetailFragment.ARG_ITEM_ID, id);
 			PostDetailFragment fragment = new PostDetailFragment();
 			fragment.setArguments(arguments);
-			getSupportFragmentManager().beginTransaction().replace(R.id.post_detail_container, fragment).commit();
-
+			getFragmentManager().beginTransaction().replace(R.id.post_detail, fragment).commit();
 		}
 		else
 		{
 			// In single-pane mode, simply start the detail activity
 			// for the selected item ID.
-			Intent detailIntent = new Intent(this, PostDetailActivity.class);
+			Intent detailIntent = new Intent(getActivity(), PostDetailActivity.class);
 			detailIntent.putExtra(PostDetailFragment.ARG_ITEM_ID, id);
 			startActivity(detailIntent);
 		}
