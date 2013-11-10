@@ -44,7 +44,7 @@ public class PostsListFragment extends Fragment implements PostListFragment.Call
 
 			// In two-pane mode, list items should be given the
 			// 'activated' state when touched.
-			((PostListFragment) getFragmentManager().findFragmentById(R.id.postListFragment)).setActivateOnItemClick(true);
+			((PostListFragment) getFragmentManager().findFragmentById(R.id.post_list)).setActivateOnItemClick(true);
 		}
 		return view;
 	}

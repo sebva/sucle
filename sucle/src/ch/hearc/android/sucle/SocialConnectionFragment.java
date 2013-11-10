@@ -3,7 +3,10 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+
+import com.google.android.gms.common.SignInButton;
 
 public class SocialConnectionFragment extends Fragment
 {
@@ -11,6 +14,11 @@ public class SocialConnectionFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View view = inflater.inflate(R.layout.social_connection_fragment, container, false);
+		SignInButton googleButton = (SignInButton) view.findViewById(R.id.google_sign_in_button);
+		googleButton.setSize(SignInButton.SIZE_WIDE);
+		
+		googleButton.setOnClickListener((OnClickListener)getActivity());
+		
 		return view;
 	}
 
