@@ -1,12 +1,11 @@
 package ch.hearc.android.sucle;
 
 import android.app.Activity;
+import android.app.ListFragment;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import ch.hearc.android.sucle.dummy.DummyContent;
 
 /**
@@ -90,20 +89,20 @@ public class PostListFragment extends ListFragment
 			setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
 		}
 	}
-
+	/*
 	@Override
 	public void onAttach(Activity activity)
 	{
 		super.onAttach(activity);
 
 		// Activities containing this fragment must implement its callbacks.
-		if (!(activity instanceof Callbacks))
-		{
-			throw new IllegalStateException("Activity must implement fragment's callbacks.");
-		}
+		//if (!(activity instanceof Callbacks))
+		//{
+		/	throw new IllegalStateException("Activity must implement fragment's callbacks.");
+		//}
 
 		mCallbacks = (Callbacks) activity;
-	}
+	}*/
 
 	@Override
 	public void onDetach()

@@ -1,20 +1,20 @@
 package ch.hearc.android.sucle;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
 /**
  * An activity representing a single Post detail screen. This activity is only
  * used on handset devices. On tablet-size devices, item details are presented
- * side-by-side with a list of items in a {@link PostListActivity}.
+ * side-by-side with a list of items in a {@link PostsListFragment}.
  * <p>
  * This activity is mostly just a 'shell' activity containing nothing more than
  * a {@link PostDetailFragment}.
  */
-public class PostDetailActivity extends FragmentActivity
+public class PostDetailActivity extends Activity
 {
 
 	@Override
@@ -43,7 +43,7 @@ public class PostDetailActivity extends FragmentActivity
 			arguments.putString(PostDetailFragment.ARG_ITEM_ID, getIntent().getStringExtra(PostDetailFragment.ARG_ITEM_ID));
 			PostDetailFragment fragment = new PostDetailFragment();
 			fragment.setArguments(arguments);
-			getSupportFragmentManager().beginTransaction().add(R.id.post_detail_container, fragment).commit();
+			getFragmentManager().beginTransaction().add(R.id.post_detail_container, fragment).commit();
 		}
 	}
 
@@ -60,7 +60,7 @@ public class PostDetailActivity extends FragmentActivity
 				//
 				// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 				//
-				NavUtils.navigateUpTo(this, new Intent(this, PostListActivity.class));
+				NavUtils.navigateUpTo(this, new Intent(this, PostsListFragment.class));
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
