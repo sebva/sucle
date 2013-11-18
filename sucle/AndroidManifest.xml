@@ -5,11 +5,14 @@
     android:versionName="1.0" >
 
     <uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
     <application
         android:allowBackup="true"
@@ -17,7 +20,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="ch.hearc.android.sucle.PostListActivity"
+            android:name="ch.hearc.android.sucle.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,10 +31,22 @@
         <activity
             android:name="ch.hearc.android.sucle.PostDetailActivity"
             android:label="@string/title_post_detail"
-            android:parentActivityName=".PostListActivity" >
+            android:parentActivityName=".PostsListFragment" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".PostListActivity" />
+        </activity>
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/app_id" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
+
+        <activity
+            android:name="com.facebook.LoginActivity"
+            android:label="@string/login_title" >
         </activity>
     </application>
 

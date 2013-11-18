@@ -1,17 +1,16 @@
 package ch.hearc.android.sucle;
 
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import ch.hearc.android.sucle.dummy.DummyContent;
 
 /**
  * A fragment representing a single Post detail screen. This fragment is either
- * contained in a {@link PostListActivity} in two-pane mode (on tablets) or a
+ * contained in a {@link PostsListFragment} in two-pane mode (on tablets) or a
  * {@link PostDetailActivity} on handsets.
  */
 public class PostDetailFragment extends Fragment
