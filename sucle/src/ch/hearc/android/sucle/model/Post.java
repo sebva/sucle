@@ -1,6 +1,7 @@
 package ch.hearc.android.sucle.model;
 
-import java.sql.Date;
+import java.util.Date;
+
 import com.google.android.gms.maps.model.LatLng;
 
 public class Post
@@ -9,13 +10,15 @@ public class Post
 	private LatLng		position;
 	private Date		time;
 	private Attachment	attachment;
-
-	public Post(User user, LatLng position, Date time, Attachment attachment)
+	private String message;
+	
+	public Post(User user, LatLng position, Date time, Attachment attachment, String message)
 	{
 		this.user = user;
 		this.position = position;
 		this.time = time;
 		this.attachment = attachment;
+		this.message = message;
 	}
 
 	public User getUser()
@@ -37,5 +40,14 @@ public class Post
 	{
 		return attachment;
 	}
+	
+	public String getMessage()
+	{
+		return message;
+	}
 
+	@Override
+	public String toString() {
+		return "(" + position.latitude + ";" + position.longitude + ") " + time + " " + user + " " + attachment + " " + message; 
+	}
 }

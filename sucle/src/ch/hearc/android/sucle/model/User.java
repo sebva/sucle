@@ -30,4 +30,8 @@ public class User
 		return registration;
 	}
 
+	@Override
+	public String toString() {
+		return socialId + " " + socialType + " " + registration;
+	}
 }
