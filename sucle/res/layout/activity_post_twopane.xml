@@ -7,23 +7,10 @@
     android:baselineAligned="false"
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
-    android:showDividers="middle"
-    tools:context=".PostsListFragment" >
-
-    <!--
-    This layout is a two-pane layout for the Posts
-    master/detail flow. See res/values-large/refs.xml and
-    res/values-sw600dp/refs.xml for an example of layout aliases
-    that replace the single-pane version of the layout with
-    this two-pane version.
-
-    For more on layout aliases, see:
-    http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
-    -->
-
-    <fragment
+    android:showDividers="middle" >
+    <fragment
         android:id="@+id/post_list"
-        android:name="ch.hearc.android.sucle.PostListFragment"
+        android:name="ch.hearc.android.sucle.TimelineFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

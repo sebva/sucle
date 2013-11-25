@@ -69,9 +69,7 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 		
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);
-		Log.d(LOG, "Before layout");
 		setContentView(R.layout.main_activity);
-		Log.d(LOG, "After layout");
 
 		FragmentManager fm = getFragmentManager();
 		fragments[SOCIAL_CONNECTION_FRAGMENT] = fm.findFragmentById(R.id.socialConnectionFragment);

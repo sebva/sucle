@@ -12,7 +12,7 @@
     
     <fragment
         android:id="@+id/postListFragment"
-        android:name="ch.hearc.android.sucle.PostsListFragment"
+        android:name="ch.hearc.android.sucle.PostsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
