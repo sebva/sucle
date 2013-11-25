@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import android.content.res.Resources;
+
 public final class WebServicesInfo {
 
 	public static final String BASE_URL = "https://sucle-diego999.rhcloud.com";
@@ -23,24 +25,17 @@ public final class WebServicesInfo {
 	
 	public static class JSONKey
 	{
-		public static final Map<String, String> ERROR_MAP;
+		public static final Map<Integer, String> ERROR_MAP;
 		static
-		{
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("400", "Token expiré ou inexistant");
-			map.put("401", "Un ou plusieurs paramètres sont invalides");
-			map.put("402", "Problème lors du transfert de fichier");
-			map.put("403", "Fichier trop lourd");
-			map.put("404", "Format non autorisé");
-			map.put("405", "Message vide");
-			map.put("406", "Message trop long");
-			map.put("407", "Réseau social non reconnu");
-
-			map.put("500", "Impossible de se connecter à la base de données");
-			map.put("501", "Problème création user");
-			map.put("502", "Problème création device");
-			map.put("503", "Problème création social");
-			map.put("504", "Problème créeation pièce jointe");
+		{	
+			Map<Integer, String> map = new HashMap<Integer, String>();
+			String[] messages = Resources.getSystem().getStringArray(R.array.error_messages);
+			int[] codes = Resources.getSystem().getIntArray(R.array.error_codes);
+			
+			assert(messages.length == codes.length);
+			
+			for(int i = 0; i < messages.length; ++i)
+				map.put(codes[i], messages[i]);
 			
 			ERROR_MAP = Collections.unmodifiableMap(map);
 		}

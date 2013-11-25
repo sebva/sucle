@@ -5,5 +5,36 @@
     <string name="title_post_detail">Post Detail</string>
     <string name="app_id">170038059858161</string>
     <string name="login_title">Login</string>
+    <integer-array name="error_codes">
+        <item>400</item>
+        <item>401</item>
+        <item>402</item>
+        <item>403</item>
+        <item>404</item>
+        <item>405</item>
+        <item>406</item>
+        <item>407</item>
+        <item>500</item>
+        <item>501</item>
+        <item>502</item>
+        <item>503</item>
+        <item>504</item>
+    </integer-array>
+			
+    <string-array name="error_messages">
+        <item>Token has expired or doesn\'t exist</item>
+        <item>One or more parameters are invalid</item>
+        <item>There was a problem during the file transfer</item>
+        <item>File too big</item>
+        <item>The format is not permitted</item>
+        <item>The message is empty</item>
+        <item>The message is too long</item>
+        <item>Unknown social network</item>
+        <item>Cannot connect to the database</item>
+        <item>There was a problem during the user creation</item>
+        <item>There was a problem during the device creation</item>
+        <item>There was a problem during the social creation</item>
+        <item>There was a problem during the file creation</item>
+    </string-array>
 
 </resources>
