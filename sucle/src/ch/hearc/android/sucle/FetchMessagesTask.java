@@ -6,28 +6,33 @@ import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.google.android.gms.maps.model.LatLng;
-
+import android.location.Location;
+import android.os.AsyncTask;
+import android.util.Log;
+import ch.hearc.android.sucle.PostsManager.FetchMessagesListener;
 import ch.hearc.android.sucle.model.Attachment;
 import ch.hearc.android.sucle.model.AttachmentType;
 import ch.hearc.android.sucle.model.Post;
 import ch.hearc.android.sucle.model.SocialType;
 import ch.hearc.android.sucle.model.User;
-import android.location.Location;
-import android.os.AsyncTask;
-import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
 
 public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 {
 	private String error = null;
+	private FetchMessagesListener listener;
 	
+	public FetchMessagesTask(FetchMessagesListener listener)
+	{
+		this.listener = listener;
+	}
+
 	@Override
 	protected void onPostExecute(Post[] result) {
 		super.onPostExecute(result);
@@ -36,8 +41,10 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 		else if(error != null)
 			Log.i("error", error);
 		else
-			//TODO Update the GUI
+		{
 			Log.i("posts", result.toString());
+			listener.onPostsFetched(result);
+		}
 	}
 	
 	@Override
