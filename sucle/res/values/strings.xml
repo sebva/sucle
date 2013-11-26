@@ -5,6 +5,7 @@
     <string name="title_post_detail">Post Detail</string>
     <string name="app_id">170038059858161</string>
     <string name="login_title">Login</string>
+
     <integer-array name="error_codes">
         <item>400</item>
         <item>401</item>
@@ -20,7 +21,7 @@
         <item>503</item>
         <item>504</item>
     </integer-array>
-			
+
     <string-array name="error_messages">
         <item>Token has expired or doesn\'t exist</item>
         <item>One or more parameters are invalid</item>
@@ -36,5 +37,13 @@
         <item>There was a problem during the social creation</item>
         <item>There was a problem during the file creation</item>
     </string-array>
+
+    <string name="error_internet_request">Cannot connect to the server</string>
+    <string name="sending_message">Sending message in progress</string>
+    <string name="message_task_notification_title">Sucle</string>
+    <string name="new_message_notification_title_template">New message: %1$s</string>
+    <string name="new_message_notification_placeholder_text_template">You said %1$s and lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam non enim magna. Morbi dictum, velit vel semper venenatis, magna odio volutpat velit, at ullamcorper nulla lacus sed turpis. Pellentesque vitae metus elit, nec tincidunt tellus. Integer sed nisl sem, ullamcorper ornare lacus. Duis ac mauris sed massa congue volutpat. Donec sed erat sit amet turpis viverra rhoncus sit amet nec magna. Donec lacinia ligula at libero volutpat volutpat nec nec tortor.</string>
+    <string name="action_share">Share</string>
+    <string name="action_reply">Reply</string>
 
 </resources>

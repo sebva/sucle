@@ -29,8 +29,8 @@ public final class WebServicesInfo {
 		static
 		{	
 			Map<Integer, String> map = new HashMap<Integer, String>();
-			String[] messages = Resources.getSystem().getStringArray(R.array.error_messages);
-			int[] codes = Resources.getSystem().getIntArray(R.array.error_codes);
+			String[] messages = Sucle.getAppContext().getResources().getStringArray(R.array.error_messages);
+			int[] codes = Sucle.getAppContext().getResources().getIntArray(R.array.error_codes);
 			
 			assert(messages.length == codes.length);
 			
