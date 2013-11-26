@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
-import ch.hearc.android.sucle.PostsManager.FetchMessagesListener;
 import ch.hearc.android.sucle.model.Attachment;
 import ch.hearc.android.sucle.model.AttachmentType;
 import ch.hearc.android.sucle.model.Post;
@@ -25,25 +24,31 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 {
-	private String error = null;
-	private FetchMessagesListener listener;
-	
-	public FetchMessagesTask(FetchMessagesListener listener)
+	public interface FetchMessagesListener
 	{
-		this.listener = listener;
+		public void onPostsFetched();
+	}
+	
+	private String error;
+	private FetchMessagesListener listenerFML;
+	private PostsManager postsManager;
+	
+	public FetchMessagesTask(FetchMessagesListener listener, PostsManager postsManager)
+	{
+		this.error = null;
+		this.postsManager = postsManager;
+		this.listenerFML = listener;
 	}
 
 	@Override
 	protected void onPostExecute(Post[] result) {
 		super.onPostExecute(result);
-		if(result == null)
-			Log.i("posts", "There was a little problem during the process ...");
-		else if(error != null)
-			Log.i("error", error);
+		if(error != null)
+			MessageNotification.basicNotification(Sucle.getAppContext(), error);
 		else
 		{
-			Log.i("posts", result.toString());
-			listener.onPostsFetched(result);
+			postsManager.setPosts(result);
+			listenerFML.onPostsFetched();
 		}
 	}
 	
@@ -71,7 +76,7 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			error = e.getMessage();
+			error = Sucle.getAppContext().getResources().getString(R.string.error_internet_request);
 			response = null;
 		}
 
@@ -125,11 +130,8 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 			}
 			else
 			{
-				Exception e = new Exception(WebServicesInfo.JSONKey.ERROR_MAP.get(jObject.getString(WebServicesInfo.JSONKey.ERROR_CODE)));
-				error = e.getMessage();
-				throw e;
+				error = WebServicesInfo.JSONKey.ERROR_MAP.get(Integer.valueOf(jObject.getString(WebServicesInfo.JSONKey.ERROR_CODE)));
 			}
-			
 		}
 		catch (Exception e) 
 		{

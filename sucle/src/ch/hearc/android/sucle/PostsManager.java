@@ -1,15 +1,12 @@
 package ch.hearc.android.sucle;
 
+import ch.hearc.android.sucle.FetchMessagesTask.FetchMessagesListener;
 import ch.hearc.android.sucle.model.Post;
 import android.location.Location;
 
 public class PostsManager {
 	
-	public interface FetchMessagesListener
-	{
-		public void onPostsFetched(Post[] posts);
-	}
-
+	private Post[] posts;
 	private double radius;
 	private Location location;
 	private int nbMessage;
@@ -20,6 +17,7 @@ public class PostsManager {
 		this.radius = radius;
 		this.location = null;
 		this.nbMessage = nbMessages;
+		posts = null;
 	}
 	
 	public void getNearbyPosts()
@@ -32,7 +30,7 @@ public class PostsManager {
 		params[1] = radius;
 		params[2] = nbMessage;
 		
-		new FetchMessagesTask(listener).execute(params);
+		new FetchMessagesTask(null, this).execute(params);
 	}
 	
 	public void onLocationChanged(Location location)
@@ -63,5 +61,15 @@ public class PostsManager {
 	public void setListener(FetchMessagesListener listener)
 	{
 		this.listener = listener;
+	}
+	
+	public void setPosts(Post[] posts)
+	{
+		this.posts = posts;
+	}
+	
+	public Post[] getPost()
+	{
+		return posts;
 	}
 }

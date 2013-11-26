@@ -17,16 +17,26 @@ import android.util.Log;
 
 public class LoginTask extends AsyncTask<String, Void, Void>
 {
+	public interface LoginListener
+	{
+		public void onLogin();
+	}
+	
 	private String error = null;
+	private LoginListener listener;
+	
+	public LoginTask(LoginListener listener)
+	{
+		this.listener = listener;
+	}
 	
 	@Override
 	protected void onPostExecute(Void result) {
 		super.onPostExecute(result);
-		//TODO Update GUI
 		if(error != null)
-			Log.i("error",error);
+			MessageNotification.basicNotification(Sucle.getAppContext(), error);
 		else
-			Log.i("success", "success");
+			listener.onLogin();
 	} 
 	
 	@Override
@@ -62,7 +72,7 @@ public class LoginTask extends AsyncTask<String, Void, Void>
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			error = e.getMessage();
+			error = Sucle.getAppContext().getResources().getString(R.string.error_internet_request);
 			return null;
 		}
 		
@@ -70,11 +80,7 @@ public class LoginTask extends AsyncTask<String, Void, Void>
 		{
 			JSONObject jObject = new JSONObject(WebServicesInfo.parseContent(response.getEntity().getContent()));
 			if(jObject.getString(WebServicesInfo.JSONKey.STATUS).equals(WebServicesInfo.JSONKey.STATUS_NOT_VALID))
-			{
-				Exception e = new Exception(WebServicesInfo.JSONKey.ERROR_MAP.get(jObject.getString(WebServicesInfo.JSONKey.ERROR_CODE)));
-				error = e.getMessage();
-				throw e;
-			}
+				error = WebServicesInfo.JSONKey.ERROR_MAP.get(Integer.valueOf(jObject.getString(WebServicesInfo.JSONKey.ERROR_CODE)));
 		}
 		catch (Exception e) 
 		{
