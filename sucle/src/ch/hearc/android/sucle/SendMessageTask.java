@@ -21,10 +21,9 @@ public class SendMessageTask extends AsyncTask<String, Void, Void>
 	@Override
 	protected void onPostExecute(Void result) {
 		super.onPostExecute(result);
+		MessageNotification.cancel(Sucle.getAppContext());
 		if(error != null)
 			MessageNotification.basicNotification(Sucle.getAppContext(), error);
-		else
-			MessageNotification.cancel(Sucle.getAppContext());
 	} 
 	
 	@Override
