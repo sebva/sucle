@@ -1,8 +1,10 @@
 package ch.hearc.android.sucle;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,7 +15,6 @@ import org.json.JSONObject;
 
 import android.location.Location;
 import android.os.AsyncTask;
-import android.util.Log;
 import ch.hearc.android.sucle.model.Attachment;
 import ch.hearc.android.sucle.model.AttachmentType;
 import ch.hearc.android.sucle.model.Post;
@@ -97,19 +98,21 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 				{
 					JSONObject object = jArray.getJSONObject(i);
 					SocialType socialType = SocialType.Undefined;
-					String socialTypestr = jObject.getString(WebServicesInfo.JSONKey.USER_TYPE);
+
+					JSONObject userObject = object.getJSONObject(WebServicesInfo.JSONKey.MESSAGE_USER);
+					String socialTypestr = userObject.getString(WebServicesInfo.JSONKey.USER_TYPE);
 					
 					if(socialTypestr == WebServicesInfo.JSONKey.USER_TYPE_FACEBOOK)
 						socialType = SocialType.Facebook;
 					else if(socialTypestr == WebServicesInfo.JSONKey.USER_TYPE_GOOGLEPLUS)
 						socialType = SocialType.GooglePlus;
 					
-					User user = new User(object.getInt(WebServicesInfo.JSONKey.USER_SOCIAL_ID), socialType, new Date(object.getString(WebServicesInfo.JSONKey.USER_INSCRIPTION)));
+					User user = new User(userObject.getInt(WebServicesInfo.JSONKey.USER_SOCIAL_ID), socialType, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(userObject.getString(WebServicesInfo.JSONKey.USER_INSCRIPTION)));
 					
 					Attachment attachment = null;
 					AttachmentType attachmentType = AttachmentType.Undefined;
-					String filePath = jObject.getString(WebServicesInfo.JSONKey.MESSAGE_FILE);
-					String mime = jObject.getString(WebServicesInfo.JSONKey.MESSAGE_MIME);
+					String filePath = object.getString(WebServicesInfo.JSONKey.MESSAGE_FILE);
+					String mime = object.getString(WebServicesInfo.JSONKey.MESSAGE_MIME);
 					
 					if(WebServicesInfo.MIME_AUDIO.contains(mime))
 						attachmentType = AttachmentType.Sound;
@@ -122,7 +125,12 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 						attachment = new Attachment(null , attachmentType, filePath);
 					
 					
-					posts.add(new Post(user, new LatLng(object.getDouble(WebServicesInfo.JSONKey.MESSAGE_LAT), object.getDouble(WebServicesInfo.JSONKey.MESSAGE_LONG)), new Date(object.getString(WebServicesInfo.JSONKey.MESSAGE_DATETIME)), attachment, object.getString(WebServicesInfo.JSONKey.MESSAGE_MESSAGE)));
+					posts.add(new Post(user, 
+							new LatLng(Double.valueOf(object.getString(WebServicesInfo.JSONKey.MESSAGE_LAT)), 
+									Double.valueOf(object.getString(WebServicesInfo.JSONKey.MESSAGE_LONG))), 
+							new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(object.getString(WebServicesInfo.JSONKey.MESSAGE_DATETIME)), 
+							attachment, 
+							object.getString(WebServicesInfo.JSONKey.MESSAGE_MESSAGE)));
 				
 					Post[] out = new Post[posts.size()];
 					return posts.toArray(out);
