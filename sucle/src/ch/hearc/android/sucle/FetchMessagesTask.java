@@ -65,7 +65,7 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 		int nbMessage = (Integer)params[2];
 		
 		HttpClient httpclient = new DefaultHttpClient();
-		String getParameter = "?lat=" + location.getLatitude() + "&lon=" + location.getLongitude() +"&r" + radius + "&nb=" + nbMessage;
+		String getParameter = "?lat=" + location.getLatitude() + "&lon=" + location.getLongitude() +"&r=" + radius + "&nb=" + nbMessage;
 		HttpGet request = new HttpGet(WebServicesInfo.URL_GET_MESSAGE + getParameter);
 
 		HttpResponse response = null;

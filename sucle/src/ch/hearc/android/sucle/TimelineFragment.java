@@ -6,9 +6,13 @@ import java.util.List;
 
 import android.app.Fragment;
 import android.app.ListFragment;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import ch.hearc.android.sucle.FetchMessagesTask.FetchMessagesListener;
 import ch.hearc.android.sucle.model.Attachment;
 import ch.hearc.android.sucle.model.AttachmentType;
 import ch.hearc.android.sucle.model.Post;
@@ -17,9 +21,11 @@ import ch.hearc.android.sucle.model.User;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class TimelineFragment extends ListFragment
+public class TimelineFragment extends ListFragment implements FetchMessagesListener
 {
-	OnPostSelectedListener	mCallback;
+	private OnPostSelectedListener	mCallback;
+	private PostsManager postsManager;
+	private PostsAdapter postsAdapter;
 
 	// The container Activity must implement this interface so the frag can
 	// deliver messages
@@ -34,14 +40,34 @@ public class TimelineFragment extends ListFragment
 	{
 		super.onCreate(savedInstanceState);
 
-		PostsAdapter postsAdapter = new PostsAdapter(this.getActivity(), R.layout.fragment_post_list);
+		postsAdapter = new PostsAdapter(this.getActivity(), R.layout.fragment_post_list);
 		setListAdapter(postsAdapter);
 
+		postsManager = new PostsManager(1000, 100, this);
+		Location location = new Location(LocationManager.GPS_PROVIDER);
+		location.setLatitude(45);
+		location.setLongitude(6);
+		postsManager.onLocationChanged(location);
+		postsManager.getNearbyPosts();
+		
 		// Populate the list, through the adapter
-		for (final Post post : getPostsEntries())
-		{
-			postsAdapter.add(post);
-		}
+//		for (final Post post : getPostsEntries())
+//		{
+//			postsAdapter.add(post);
+//		}
+	}
+
+	@Override
+	public void onPostsFetched()
+	{
+		Post[] posts = postsManager.getPost();
+		if(posts != null)
+			for (final Post post : posts)
+			{
+				postsAdapter.add(post);
+			}
+		else
+			Log.e("hello", "sucks");
 	}
 
 	private List<Post> getPostsEntries()
@@ -56,7 +82,7 @@ public class TimelineFragment extends ListFragment
 
 		for (int i = 4; i < 50; i++)
 		{
-			posts.add(new Post(new User(i, SocialType.Facebook, new Date()), new LatLng(47.546, 6.954), new Date(), new Attachment(new Object(), AttachmentType.Picture, "path")));
+			posts.add(new Post(new User(i, SocialType.Facebook, new Date()), new LatLng(47.546, 6.954), new Date(), new Attachment(new Object(), AttachmentType.Picture, "path"), "Dummy message"));
 		}
 
 		return posts;

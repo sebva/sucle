@@ -32,7 +32,7 @@ public class PostsAdapter extends ArrayAdapter<Post>
 		long delta = ((new Date()).getTime() - post.getTime().getTime());
 		viewHolder.username.setText(Integer.toString(post.getUser().getSocialId()));
 		post.getUser().loadFullName(viewHolder.username);
-		viewHolder.postContent.setText("Dummy message");// TODO: message
+		viewHolder.postContent.setText(post.getMessage());
 		viewHolder.location.setText(post.getPosition().latitude + ", " + post.getPosition().longitude);
 		viewHolder.postDate.setText(delta / 1000 + "sec ago");
 		viewHolder.userImageView.setProfileId(Integer.toString(post.getUser().getSocialId()));

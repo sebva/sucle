@@ -10,13 +10,14 @@ public class PostsManager {
 	private double radius;
 	private Location location;
 	private int nbMessage;
-	private FetchMessagesListener listener = null;
+	private FetchMessagesListener listener;
 	
-	public PostsManager(double radius, int nbMessages)
+	public PostsManager(double radius, int nbMessages, FetchMessagesListener listener)
 	{
 		this.radius = radius;
 		this.location = null;
 		this.nbMessage = nbMessages;
+		this.listener = listener;
 		posts = null;
 	}
 	
@@ -30,7 +31,7 @@ public class PostsManager {
 		params[1] = radius;
 		params[2] = nbMessage;
 		
-		new FetchMessagesTask(null, this).execute(params);
+		new FetchMessagesTask(listener, this).execute(params);
 	}
 	
 	public void onLocationChanged(Location location)
