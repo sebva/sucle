@@ -3,7 +3,6 @@ package ch.hearc.android.sucle;
 import java.util.Date;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

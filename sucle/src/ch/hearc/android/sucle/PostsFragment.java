@@ -13,15 +13,20 @@ public class PostsFragment extends Fragment implements TimelineFragment.OnPostSe
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View view = inflater.inflate(R.layout.fragment_timeline, container, false);
-
+		
+/*
 		if (view.findViewById(R.id.fragment_container) != null)
 		{
 			TimelineFragment timelineFragment = new TimelineFragment();
-			
-			timelineFragment.setArguments(getActivity().getIntent().getExtras());
+
+			timelineFragment.setCallback(this);
 
 			// Add the fragment to the 'fragment_container' FrameLayout
 			getFragmentManager().beginTransaction().add(R.id.fragment_container, timelineFragment).commit();
+		}
+		else */if (getFragmentManager().findFragmentById(R.id.timelineFragment) != null)
+		{
+			((TimelineFragment) getFragmentManager().findFragmentById(R.id.timelineFragment)).setCallback(this);
 		}
 		return view;
 	}
@@ -43,11 +48,11 @@ public class PostsFragment extends Fragment implements TimelineFragment.OnPostSe
 			newFragment.setArguments(args);
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-			transaction.replace(R.id.fragment_container, newFragment);
+			transaction.add(R.id.activity_fragment_container, newFragment);
+			transaction.hide((getFragmentManager()).findFragmentById(R.id.postListFragment));
 			transaction.addToBackStack(null);
 
 			transaction.commit();
 		}
-
 	}
 }

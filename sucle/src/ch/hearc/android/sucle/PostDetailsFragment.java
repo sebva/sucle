@@ -2,6 +2,7 @@ package ch.hearc.android.sucle;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,7 @@ public class PostDetailsFragment extends Fragment
 	public void updatePostView(int position)
 	{
 		TextView post = (TextView) getActivity().findViewById(R.id.postContent);
+		Log.e("Hello", (String) post.getText());
 		post.setText("hello");
 		mCurrentPosition = position;
 	}

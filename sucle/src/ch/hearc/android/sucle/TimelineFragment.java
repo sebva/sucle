@@ -2,25 +2,20 @@ package ch.hearc.android.sucle;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.ListFragment;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import ch.hearc.android.sucle.model.Attachment;
 import ch.hearc.android.sucle.model.AttachmentType;
 import ch.hearc.android.sucle.model.Post;
 import ch.hearc.android.sucle.model.SocialType;
 import ch.hearc.android.sucle.model.User;
+
+import com.google.android.gms.maps.model.LatLng;
 
 public class TimelineFragment extends ListFragment
 {
@@ -61,7 +56,7 @@ public class TimelineFragment extends ListFragment
 
 		for (int i = 4; i < 50; i++)
 		{
-			posts.add(new Post(new User(i, SocialType.Facebook, new Date()), new LatLng(47.546, 6.954), new Date(12315465), new Attachment(new Object(), AttachmentType.Picture, "path")));
+			posts.add(new Post(new User(i, SocialType.Facebook, new Date()), new LatLng(47.546, 6.954), new Date(), new Attachment(new Object(), AttachmentType.Picture, "path")));
 		}
 
 		return posts;
@@ -83,27 +78,6 @@ public class TimelineFragment extends ListFragment
 	}
 
 	@Override
-	public void onAttach(Activity activity)
-	{
-		super.onAttach(activity);
-
-		// This makes sure that the container activity has implemented
-		// the callback interface. If not, it throws an exception.
-
-		Log.e("hello", getArguments().toString());
-		
-		/*try
-		{
-			mCallback = (OnPostSelectedListener) activity;
-		}
-		catch (ClassCastException e)
-		{
-			throw new ClassCastException(activity.toString() + " must implement OnPostSelectedListener");
-		}*/
-
-	}
-
-	@Override
 	public void onListItemClick(ListView l, View v, int position, long id)
 	{
 		// Notify the parent activity of selected item
@@ -111,5 +85,17 @@ public class TimelineFragment extends ListFragment
 
 		// Set the item as checked to be highlighted when in two-pane layout
 		getListView().setItemChecked(position, true);
+	}
+
+	public void setCallback(Fragment fragment)
+	{
+		try
+		{
+			mCallback = (OnPostSelectedListener) fragment;
+		}
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(fragment.toString() + " must implement OnPostSelectedListener");
+		}
 	}
 }
