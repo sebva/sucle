@@ -161,6 +161,7 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 	public void onConnected(Bundle connectionHint)
 	{
 		getGoogleToken();
+		showFragment(POSTS_FRAGMENT, false);
 	}
 
 	@Override

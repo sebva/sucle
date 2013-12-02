@@ -35,16 +35,21 @@ public class User
 		return registration;
 	}
 
-	public void loadFullName(final TextView textview)
-	{
-		Request.newGraphPathRequest(null, Integer.toString(socialId), new Request.Callback() {
-
-			@Override
-			public void onCompleted(Response response)
-			{
-				if (response.getGraphObject() != null) textview.setText(response.getGraphObject().getProperty("name").toString());
-			}
-		}).executeAsync();
+	@Override
+	public String toString() {
+		return socialId + " " + socialType + " " + registration;
 	}
+
+	public void loadFullName(final TextView textview)
+		{
+			Request.newGraphPathRequest(null, Integer.toString(socialId), new Request.Callback() {
+
+				@Override
+				public void onCompleted(Response response)
+				{
+					if (response.getGraphObject() != null) textview.setText(response.getGraphObject().getProperty("name").toString());
+				}
+			}).executeAsync();
+		}
 
 }
