@@ -1,6 +1,8 @@
 package ch.hearc.android.sucle.model;
 
-public enum SocialType
+import java.io.Serializable;
+
+public enum SocialType implements Serializable
 {
 	Facebook, GooglePlus, Undefined
 }
