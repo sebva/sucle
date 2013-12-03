@@ -1,25 +1,20 @@
 package ch.hearc.android.sucle;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.Signature;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Base64;
+import android.provider.Settings.Secure;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
+import ch.hearc.android.sucle.model.SocialType;
 
 import com.facebook.Request;
 import com.facebook.Response;
@@ -34,7 +29,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.plus.PlusClient;
 
-public class MainActivity extends Activity implements PlusClient.ConnectionCallbacks, PlusClient.OnConnectionFailedListener, PlusClient.OnAccessRevokedListener, OnClickListener
+public class MainActivity extends Activity implements PlusClient.ConnectionCallbacks, PlusClient.OnConnectionFailedListener, PlusClient.OnAccessRevokedListener, OnClickListener, LoginTask.LoginListener
 {
 	private boolean isResumed = false;
 	private static final int SOCIAL_CONNECTION_FRAGMENT = 0;
@@ -63,7 +58,7 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
+
 		mPlusClient = new PlusClient.Builder(this, this, this).setActions("http://schemas.google.com/AddActivity", "http://schemas.google.com/BuyActivity")
 				.setScopes(Scopes.PLUS_LOGIN).build();
 		
@@ -161,7 +156,6 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 	public void onConnected(Bundle connectionHint)
 	{
 		getGoogleToken();
-		showFragment(POSTS_FRAGMENT, false);
 	}
 
 	@Override
@@ -197,11 +191,18 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 			protected void onPostExecute(String token)
 			{
 				Log.d(LOG, "Server token = " + token);
+				loginToSucle(mPlusClient.getCurrentPerson().getId(), token, SocialType.GooglePlus);
 			};
 		}.execute(mPlusClient.getAccountName());
 	}
 
-	private void onSessionStateChange(Session session, SessionState state, Exception exception)
+	@Override
+	public void onLogin()
+	{
+		showFragment(POSTS_FRAGMENT, false);
+	}
+	
+	private void onSessionStateChange(final Session session, SessionState state, Exception exception)
 	{
 		// Only make changes if the activity is visible
 		if (isResumed)
@@ -218,7 +219,7 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 			{
 				// If the session state is open:
 				// Show the authenticated fragment
-				showFragment(POSTS_FRAGMENT, false);
+				
 				Log.d(FACEBOOK_LOG, "Access Token" + session.getAccessToken());
 				Request.newMeRequest(session, new Request.GraphUserCallback()
 				{
@@ -230,9 +231,10 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 						{
 							Log.d(FACEBOOK_LOG, "User ID " + user.getId());
 							Log.d(FACEBOOK_LOG, "User Name " + user.getFirstName() + " " + user.getLastName());
-							Toast.makeText(MainActivity.this,
+							/*Toast.makeText(MainActivity.this,
 									"Welcome : " + user.getFirstName() + " " + user.getLastName() + "\nYour User ID IS : " + user.getId(), Toast.LENGTH_SHORT)
-									.show();
+									.show();*/
+							loginToSucle(user.getId(), session.getAccessToken(), SocialType.Facebook);
 						}
 					}
 				}).executeAsync();
@@ -246,6 +248,18 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 		}
 	}
 
+	private void loginToSucle(String id, String token, SocialType type)
+	{
+		String[] params = new String[6];
+		params[0] = id;
+		params[1] = type.toString();
+		params[2] = token;
+		params[3] = Tools.sha512(Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID));
+		params[4] = "Android";
+		params[5] = Build.VERSION.CODENAME;
+		new LoginTask(MainActivity.this).execute(params);
+	}
+	
 	@Override
 	public void onResume()
 	{
@@ -309,32 +323,6 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 		super.onSaveInstanceState(outState);
 		uiHelper.onSaveInstanceState(outState);
 	}
-
-	public void generateKeyHash()
-	{
-		PackageInfo info;
-		try
-		{
-			info = getPackageManager().getPackageInfo(PACKAGE_NAME, PackageManager.GET_SIGNATURES);
-
-			for (Signature signature : info.signatures)
-			{
-				MessageDigest md = MessageDigest.getInstance("SHA");
-				md.update(signature.toByteArray());
-				Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-			}
-		}
-		catch (NameNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (NoSuchAlgorithmException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	private static final String PACKAGE_NAME = "ch.hearc.android.sucle";
 
 	private static final String FACEBOOK_LOG = "Log : Facebook";
 	private static final String LOG = "Log : " + MainActivity.class.getSimpleName();
