@@ -1,5 +1,5 @@
 <?php
-
+header('Content-type: application/json');
 require_once('../DataBase.php');
 
 if(isset($_GET['lat'], $_GET['lon'], $_GET['r'])
