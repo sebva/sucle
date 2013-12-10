@@ -2,6 +2,7 @@ package ch.hearc.android.sucle;
 
 import java.util.Date;
 
+import ch.hearc.android.sucle.model.Post;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import ch.hearc.android.sucle.model.Post;
 
 public class PostsAdapter extends ArrayAdapter<Post>
 {
@@ -28,42 +28,61 @@ public class PostsAdapter extends ArrayAdapter<Post>
 		View view = getWorkingView(convertView);
 		ViewHolder viewHolder = getViewHolder(view);
 		Post post = getItem(position);
-		
+
 		long delta = ((new Date()).getTime() - post.getTime().getTime());
 		viewHolder.username.setText(Integer.toString(post.getUser().getSocialId()));
 		post.getUser().loadFullName(viewHolder.username);
 		viewHolder.postContent.setText(post.getMessage());
-		viewHolder.location.setText(post.getPosition().latitude + ", " + post.getPosition().longitude);
+		viewHolder.location.setText(post.getPositionName());
 		viewHolder.postDate.setText(ago(delta));
 		viewHolder.userImageView.setProfileId(Integer.toString(post.getUser().getSocialId()));
-		// viewHolder.attachmentImageView;
-		// viewHolder.locationImageView;
-
-		return view;
-	}
-	
-	private static String ago(long ago)
-	{
-		String agoString;
-		if(ago < 1000)
+		if (post.getAttachment() != null)
 		{
-			agoString = ago + "ms ago";
-		}
-		else if(ago/1000 < 60)
-		{
-			agoString = ago/1000 + "sec ago";
-		}
-		else if(ago/1000/60 < 60)
-		{
-			agoString = ago/1000/60 + "min ago";
-		}
-		else if(ago/1000/60/60 < 24)
-		{
-			agoString = ago/1000/60/60 + "hours ago";
+			switch (post.getAttachment().getAttachementType())
+			{
+				case Picture:
+					viewHolder.attachmentImageView.setImageDrawable(Sucle.getAppContext().getResources().getDrawable(R.drawable.ic_action_stat_reply));
+					break;
+				case Video:
+					viewHolder.attachmentImageView.setImageDrawable(Sucle.getAppContext().getResources().getDrawable(R.drawable.ic_launcher));
+					break;
+				case Sound:
+					viewHolder.attachmentImageView.setImageDrawable(Sucle.getAppContext().getResources().getDrawable(R.drawable.ic_action_stat_share));
+					break;
+				default:
+					break;
+			}
 		}
 		else
 		{
-			agoString = ago/1000/60/60/24 + "days ago";
+			viewHolder.attachmentImageView.setVisibility(View.INVISIBLE);
+		}
+
+		return view;
+	}
+
+	private static String ago(long ago)
+	{
+		String agoString;
+		if (ago < 1000)
+		{
+			agoString = ago + "ms ago";
+		}
+		else if (ago / 1000 < 60)
+		{
+			agoString = ago / 1000 + "sec ago";
+		}
+		else if (ago / 1000 / 60 < 60)
+		{
+			agoString = ago / 1000 / 60 + "min ago";
+		}
+		else if (ago / 1000 / 60 / 60 < 24)
+		{
+			agoString = ago / 1000 / 60 / 60 + "hours ago";
+		}
+		else
+		{
+			agoString = ago / 1000 / 60 / 60 / 24 + "days ago";
 		}
 		return agoString;
 	}
@@ -97,10 +116,9 @@ public class PostsAdapter extends ArrayAdapter<Post>
 		{
 			viewHolder = new ViewHolder();
 
-			viewHolder.userImageView = (RoundedFacebookProfilePictureImageView) workingView.findViewById(R.id.userImageView);
+			viewHolder.userImageView = (ProfilePictureView) workingView.findViewById(R.id.profilePictureView);
 			viewHolder.username = (TextView) workingView.findViewById(R.id.username);
 			viewHolder.postContent = (TextView) workingView.findViewById(R.id.postContent);
-			viewHolder.locationImageView = (ImageView) workingView.findViewById(R.id.locationImageView);
 			viewHolder.location = (TextView) workingView.findViewById(R.id.location);
 			viewHolder.postDate = (TextView) workingView.findViewById(R.id.postDate);
 			viewHolder.attachmentImageView = (ImageView) workingView.findViewById(R.id.attachmentImageView);
@@ -122,12 +140,11 @@ public class PostsAdapter extends ArrayAdapter<Post>
 	 */
 	private static class ViewHolder
 	{
-		public RoundedFacebookProfilePictureImageView	userImageView;
-		public TextView									username;
-		public TextView									postContent;
-		public ImageView								locationImageView;
-		public TextView									location;
-		public TextView									postDate;
-		public ImageView								attachmentImageView;
+		public ProfilePictureView	userImageView;
+		public TextView				username;
+		public TextView				postContent;
+		public TextView				location;
+		public TextView				postDate;
+		public ImageView			attachmentImageView;
 	}
 }

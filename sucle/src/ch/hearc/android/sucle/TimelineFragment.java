@@ -43,7 +43,7 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 		postsAdapter = new PostsAdapter(this.getActivity(), R.layout.fragment_post_list);
 		setListAdapter(postsAdapter);
 
-		postsManager = new PostsManager(1000, 100, this);
+		postsManager = new PostsManager(Integer.MAX_VALUE, 100, this);
 		Location location = new Location(LocationManager.GPS_PROVIDER);
 		location.setLatitude(45);
 		location.setLongitude(6);
@@ -51,10 +51,10 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 		postsManager.getNearbyPosts();
 		
 		// Populate the list, through the adapter
-		for (final Post post : getPostsEntries())
-		{
-			postsAdapter.add(post);
-		}
+//		for (final Post post : getPostsEntries())
+//		{
+//			postsAdapter.add(post);
+//		}
 	}
 
 	@Override

@@ -4,12 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" >
 
-    <ch.hearc.android.sucle.RoundedFacebookProfilePictureImageView
-        android:id="@+id/userImageView"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_weight="0"
-        android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
+    <ch.hearc.android.sucle.ProfilePictureView
+        android:id="@+id/profilePictureView"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_margin="10dp" >
+
+    </ch.hearc.android.sucle.ProfilePictureView>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -26,7 +27,7 @@
 
         <TextView
             android:id="@+id/postContent"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.05"
             android:text="Look at this super picture :-P" />
@@ -45,6 +46,7 @@
                 android:id="@+id/location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:text="Neuchâtel"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>

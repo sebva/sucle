@@ -130,10 +130,10 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 							new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(object.getString(WebServicesInfo.JSONKey.MESSAGE_DATETIME)), 
 							attachment, 
 							object.getString(WebServicesInfo.JSONKey.MESSAGE_MESSAGE)));
-				
-					Post[] out = new Post[posts.size()];
-					return posts.toArray(out);
 				}
+				
+				Post[] out = new Post[posts.size()];
+				return posts.toArray(out);
 			}
 			else
 			{
