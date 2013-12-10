@@ -1,5 +1,6 @@
 package ch.hearc.android.sucle.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import android.widget.TextView;
@@ -7,7 +8,7 @@ import android.widget.TextView;
 import com.facebook.Request;
 import com.facebook.Response;
 
-public class User
+public class User implements Serializable
 {
 	private int			socialId;
 	private SocialType	socialType;

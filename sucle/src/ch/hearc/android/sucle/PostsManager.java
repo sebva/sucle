@@ -1,24 +1,84 @@
 package ch.hearc.android.sucle;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import android.content.Context;
+import android.location.Location;
+import android.util.Log;
 import ch.hearc.android.sucle.FetchMessagesTask.FetchMessagesListener;
 import ch.hearc.android.sucle.model.Post;
-import android.location.Location;
 
-public class PostsManager {
+public class PostsManager
+{
 	
+	private static final String TAG = "PostsManager";
 	private Post[] posts;
 	private double radius;
 	private Location location;
 	private int nbMessage;
 	private FetchMessagesListener listener;
+	private Context context;
 	
-	public PostsManager(double radius, int nbMessages, FetchMessagesListener listener)
+	private static final String FILE = "posts";
+	
+	public PostsManager(Context context, double radius, int nbMessages, FetchMessagesListener listener)
 	{
+		this.context = context;
 		this.radius = radius;
 		this.location = null;
 		this.nbMessage = nbMessages;
 		this.listener = listener;
 		posts = null;
+	}
+	
+	public void restorePosts()
+	{	
+		try
+		{
+			FileInputStream fis = context.openFileInput(FILE);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			ObjectInputStream ois = new ObjectInputStream(bis);
+			
+			posts = (Post[]) ois.readObject();
+			
+			ois.close();
+			bis.close();
+			fis.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			Log.i(TAG, "No messages were restored (FileNotFoundException)");
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void savePosts()
+	{
+		try
+		{
+			FileOutputStream fos = context.openFileOutput(FILE, Context.MODE_PRIVATE);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
+			
+			oos.writeObject(posts);
+			
+			oos.close();
+			bos.close();
+			fos.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public void getNearbyPosts()

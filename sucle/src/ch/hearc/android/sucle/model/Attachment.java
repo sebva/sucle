@@ -3,15 +3,16 @@ package ch.hearc.android.sucle.model;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class Attachment
+public class Attachment implements Serializable
 {
-	private Object			content;
-	private AttachmentType	attachementType;
-	private String			filePath;
+	private transient Object content;
+	private AttachmentType	 attachementType;
+	private String			 filePath;
 
 	public Attachment(Object content, AttachmentType attachementType, String filePath)
 	{
