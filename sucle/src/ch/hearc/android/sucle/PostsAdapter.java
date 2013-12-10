@@ -34,12 +34,38 @@ public class PostsAdapter extends ArrayAdapter<Post>
 		post.getUser().loadFullName(viewHolder.username);
 		viewHolder.postContent.setText(post.getMessage());
 		viewHolder.location.setText(post.getPosition().latitude + ", " + post.getPosition().longitude);
-		viewHolder.postDate.setText(delta / 1000 + "sec ago");
+		viewHolder.postDate.setText(ago(delta));
 		viewHolder.userImageView.setProfileId(Integer.toString(post.getUser().getSocialId()));
 		// viewHolder.attachmentImageView;
 		// viewHolder.locationImageView;
 
 		return view;
+	}
+	
+	private static String ago(long ago)
+	{
+		String agoString;
+		if(ago < 1000)
+		{
+			agoString = ago + "ms ago";
+		}
+		else if(ago/1000 < 60)
+		{
+			agoString = ago/1000 + "sec ago";
+		}
+		else if(ago/1000/60 < 60)
+		{
+			agoString = ago/1000/60 + "min ago";
+		}
+		else if(ago/1000/60/60 < 24)
+		{
+			agoString = ago/1000/60/60 + "hours ago";
+		}
+		else
+		{
+			agoString = ago/1000/60/60/24 + "days ago";
+		}
+		return agoString;
 	}
 
 	private View getWorkingView(View convertView)
@@ -48,16 +74,16 @@ public class PostsAdapter extends ArrayAdapter<Post>
 		// or inflated new if not possible
 		View workingView = null;
 
-//		if (convertView == null)
-//		{
+		if (convertView == null)
+		{
 			final LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 			workingView = inflater.inflate(postsItemLayoutResource, null);
-//		}
-//		else
-//		{
-//			workingView = convertView;
-//		}
+		}
+		else
+		{
+			workingView = convertView;
+		}
 
 		return workingView;
 	}

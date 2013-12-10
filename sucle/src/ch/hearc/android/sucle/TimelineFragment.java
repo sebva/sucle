@@ -51,10 +51,10 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 		postsManager.getNearbyPosts();
 		
 		// Populate the list, through the adapter
-//		for (final Post post : getPostsEntries())
-//		{
-//			postsAdapter.add(post);
-//		}
+		for (final Post post : getPostsEntries())
+		{
+			postsAdapter.add(post);
+		}
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 				postsAdapter.add(post);
 			}
 		else
-			Log.e("hello", "sucks");
+			Log.i(TimelineFragment.class.getSimpleName(), "No post receive from server");
 	}
 
 	private List<Post> getPostsEntries()
@@ -110,7 +110,7 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 		mCallback.onPostSelected(position);
 
 		// Set the item as checked to be highlighted when in two-pane layout
-		getListView().setItemChecked(position, true);
+		//getListView().setItemChecked(position, true);
 	}
 
 	public void setCallback(Fragment fragment)

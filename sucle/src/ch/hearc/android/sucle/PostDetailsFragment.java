@@ -26,7 +26,7 @@ public class PostDetailsFragment extends Fragment
 		}
 
 		// Inflate the layout for this fragment
-		return inflater.inflate(R.layout.fragment_post_list, container, false);
+		return inflater.inflate(R.layout.fragment_post_details, container, false);
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class PostDetailsFragment extends Fragment
 
 	public void updatePostView(int position)
 	{
-		TextView post = (TextView) getActivity().findViewById(R.id.postContent);
+		TextView post = (TextView) getActivity().findViewById(R.id.postContentDetails);
 		Log.e("Hello", (String) post.getText());
 		post.setText("hello");
 		mCurrentPosition = position;
