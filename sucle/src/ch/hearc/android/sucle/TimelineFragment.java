@@ -25,7 +25,7 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 {
 	private OnPostSelectedListener	mCallback;
 	private PostsManager postsManager;
-	private PostsAdapter postsAdapter;
+	static public PostsAdapter postsAdapter; //TODO: better
 
 	// The container Activity must implement this interface so the frag can
 	// deliver messages
@@ -43,7 +43,7 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 		postsAdapter = new PostsAdapter(this.getActivity(), R.layout.fragment_post_list);
 		setListAdapter(postsAdapter);
 
-		postsManager = new PostsManager(Integer.MAX_VALUE, 100, this);
+		postsManager = new PostsManager(Sucle.getAppContext(), Integer.MAX_VALUE, 100, this);
 		Location location = new Location(LocationManager.GPS_PROVIDER);
 		location.setLatitude(45);
 		location.setLongitude(6);

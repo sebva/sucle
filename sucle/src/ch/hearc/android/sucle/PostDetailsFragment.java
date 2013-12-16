@@ -1,12 +1,14 @@
 package ch.hearc.android.sucle;
 
 import android.app.Fragment;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import ch.hearc.android.sucle.model.AttachmentType;
+import ch.hearc.android.sucle.model.Post;
 
 public class PostDetailsFragment extends Fragment
 {
@@ -56,9 +58,15 @@ public class PostDetailsFragment extends Fragment
 
 	public void updatePostView(int position)
 	{
-		TextView post = (TextView) getActivity().findViewById(R.id.postContentDetails);
-		Log.e("Hello", (String) post.getText());
-		post.setText("hello");
+		Post post = TimelineFragment.postsAdapter.getItem(position);
+		PlayerFragment playerFragment = ((PlayerFragment) getFragmentManager().findFragmentById(R.id.mediaPlayer));
+		if (post.getAttachment().getAttachementType() == AttachmentType.Video)
+		{
+			Uri uri = Uri.withAppendedPath(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, post.getAttachment().getFilePath());
+			playerFragment.setPath(post.getAttachment().getFilePath());
+			playerFragment.play();
+		}
+
 		mCurrentPosition = position;
 	}
 

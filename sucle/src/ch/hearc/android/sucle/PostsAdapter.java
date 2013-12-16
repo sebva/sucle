@@ -4,6 +4,7 @@ import java.util.Date;
 
 import ch.hearc.android.sucle.model.Post;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,8 @@ public class PostsAdapter extends ArrayAdapter<Post>
 			switch (post.getAttachment().getAttachementType())
 			{
 				case Picture:
-					viewHolder.attachmentImageView.setImageDrawable(Sucle.getAppContext().getResources().getDrawable(R.drawable.ic_action_stat_reply));
+					Bitmap image = (Bitmap) post.getAttachment().getContent();
+					viewHolder.attachmentImageView.setImageBitmap(image);
 					break;
 				case Video:
 					viewHolder.attachmentImageView.setImageDrawable(Sucle.getAppContext().getResources().getDrawable(R.drawable.ic_launcher));
