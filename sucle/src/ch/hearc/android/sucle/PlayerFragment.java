@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +17,16 @@ public class PlayerFragment extends Fragment
 
 	MediaPlayer	mediaPlayer;
 	VideoView	videoView;
-	boolean		playing		= false;
+	boolean		playing	= false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
+		Log.e(PlayerFragment.class.getSimpleName(), "oncreate");
 		View view = inflater.inflate(R.layout.player_fragment, container, false);
 
 		videoView = (VideoView) view.findViewById(R.id.videoView);
-		//mediaPlayer = new MediaPlayer();
+		// mediaPlayer = new MediaPlayer();
 
 		return view;
 	}
@@ -34,10 +36,10 @@ public class PlayerFragment extends Fragment
 		if (path != null)
 		{
 			playing = true;
-			
+
 			videoView.setVideoPath(path);
 			videoView.setOnErrorListener(new OnErrorListener() {
-				
+
 				@Override
 				public boolean onError(MediaPlayer mp, int what, int extra)
 				{

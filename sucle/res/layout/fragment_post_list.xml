@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="horizontal" >
 
     <ch.hearc.android.sucle.ProfilePictureView
@@ -9,13 +9,12 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_margin="10dp" >
-
     </ch.hearc.android.sucle.ProfilePictureView>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="0.52"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="5"
         android:orientation="vertical" >
 
         <TextView
@@ -29,32 +28,22 @@
             android:id="@+id/postContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.05"
             android:text="Look at this super picture :-P" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <ImageView
-                android:id="@+id/locationImageView"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/com_facebook_place_default_icon" />
-
-            <TextView
-                android:id="@+id/location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="Neuchâtel"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_action_place"
+            android:text="Neuchâtel"
+            android:textAppearance="?android:attr/textAppearanceSmall" >
+        </TextView>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
         android:orientation="vertical" >
 
         <TextView
@@ -68,8 +57,7 @@
             android:id="@+id/attachmentImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_launcher" />
-
+            android:scaleType="fitCenter" />
     </LinearLayout>
 
 </LinearLayout>

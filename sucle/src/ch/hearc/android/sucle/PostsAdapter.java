@@ -32,7 +32,7 @@ public class PostsAdapter extends ArrayAdapter<Post>
 
 		long delta = ((new Date()).getTime() - post.getTime().getTime());
 		viewHolder.username.setText(Integer.toString(post.getUser().getSocialId()));
-		post.getUser().loadFullName(viewHolder.username);
+		viewHolder.username.setText(post.getUser().getName());
 		viewHolder.postContent.setText(post.getMessage());
 		viewHolder.location.setText(post.getPositionName());
 		viewHolder.postDate.setText(ago(delta));
@@ -46,18 +46,19 @@ public class PostsAdapter extends ArrayAdapter<Post>
 					viewHolder.attachmentImageView.setImageBitmap(image);
 					break;
 				case Video:
-					viewHolder.attachmentImageView.setImageDrawable(Sucle.getAppContext().getResources().getDrawable(R.drawable.ic_launcher));
+					viewHolder.attachmentImageView.setImageResource(android.R.drawable.ic_media_play);;
 					break;
 				case Sound:
-					viewHolder.attachmentImageView.setImageDrawable(Sucle.getAppContext().getResources().getDrawable(R.drawable.ic_action_stat_share));
+					viewHolder.attachmentImageView.setImageResource(R.drawable.ic_sound);;
 					break;
 				default:
 					break;
 			}
+			viewHolder.attachmentImageView.setVisibility(View.VISIBLE);
 		}
 		else
 		{
-			viewHolder.attachmentImageView.setVisibility(View.INVISIBLE);
+			viewHolder.attachmentImageView.setVisibility(View.GONE);
 		}
 
 		return view;
