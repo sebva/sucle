@@ -1,4 +1,4 @@
-package ch.hearc.android.sucle;
+package ch.hearc.android.sucle.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +14,11 @@ import org.json.JSONObject;
 
 import android.location.Location;
 import android.os.AsyncTask;
+import ch.hearc.android.sucle.R;
+import ch.hearc.android.sucle.Sucle;
+import ch.hearc.android.sucle.WebServicesInfo;
+import ch.hearc.android.sucle.R.string;
+import ch.hearc.android.sucle.WebServicesInfo.JSONKey;
 import ch.hearc.android.sucle.model.Attachment;
 import ch.hearc.android.sucle.model.AttachmentType;
 import ch.hearc.android.sucle.model.Post;
@@ -101,9 +106,9 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 					JSONObject userObject = object.getJSONObject(WebServicesInfo.JSONKey.MESSAGE_USER);
 					String socialTypestr = userObject.getString(WebServicesInfo.JSONKey.USER_TYPE);
 					
-					if(socialTypestr == WebServicesInfo.JSONKey.USER_TYPE_FACEBOOK)
+					if(socialTypestr.equals(WebServicesInfo.JSONKey.USER_TYPE_FACEBOOK))
 						socialType = SocialType.Facebook;
-					else if(socialTypestr == WebServicesInfo.JSONKey.USER_TYPE_GOOGLEPLUS)
+					else if(socialTypestr.equals(WebServicesInfo.JSONKey.USER_TYPE_GOOGLEPLUS))
 						socialType = SocialType.GooglePlus;
 					
 					User user = new User(userObject.getInt(WebServicesInfo.JSONKey.USER_SOCIAL_ID), socialType, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(userObject.getString(WebServicesInfo.JSONKey.USER_INSCRIPTION)));

@@ -1,4 +1,4 @@
-package ch.hearc.android.sucle;
+package ch.hearc.android.sucle.view;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -11,9 +11,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
+import ch.hearc.android.sucle.R;
+import ch.hearc.android.sucle.Tools;
+import ch.hearc.android.sucle.R.id;
+import ch.hearc.android.sucle.R.layout;
+import ch.hearc.android.sucle.R.menu;
+import ch.hearc.android.sucle.controller.LoginTask;
 import ch.hearc.android.sucle.model.SocialType;
 
 import com.facebook.Request;
@@ -29,47 +38,45 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.plus.PlusClient;
 
-public class MainActivity extends Activity implements PlusClient.ConnectionCallbacks, PlusClient.OnConnectionFailedListener, PlusClient.OnAccessRevokedListener, OnClickListener, LoginTask.LoginListener
+public class MainActivity extends Activity implements PlusClient.ConnectionCallbacks, PlusClient.OnConnectionFailedListener, PlusClient.OnAccessRevokedListener, OnClickListener,
+		LoginTask.LoginListener
 {
-	private boolean isResumed = false;
-	private static final int SOCIAL_CONNECTION_FRAGMENT = 0;
-	private static final int POSTS_FRAGMENT = 1;
-	private static final int FRAGMENT_COUNT = POSTS_FRAGMENT + 1;
+	private boolean					isResumed					= false;
+	private boolean					onConnectionView			= true;
+	private static final int		SOCIAL_CONNECTION_FRAGMENT	= 0;
+	private static final int		MAIN_FRAGMENT				= 1;
+	private static final int		FRAGMENT_COUNT				= MAIN_FRAGMENT + 1;
 
-	private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
+	private Fragment[]				fragments					= new Fragment[FRAGMENT_COUNT];
 
-	private UiLifecycleHelper uiHelper;
-	private Session.StatusCallback callback = new Session.StatusCallback()
-	{
-		@Override
-		public void call(Session session, SessionState state, Exception exception)
-		{
-			onSessionStateChange(session, state, exception);
-		}
-	};
+	private UiLifecycleHelper		uiHelper;
+	private Session.StatusCallback	callback					= new Session.StatusCallback() {
+																	@Override
+																	public void call(Session session, SessionState state, Exception exception)
+																	{
+																		onSessionStateChange(session, state, exception);
+																	}
+																};
 
-	private static final int REQUEST_CODE = 0;
-	protected static final int REQUEST_CODE_TOKEN = 0;
-	private PlusClient mPlusClient;
-	private ConnectionResult mConnectionResult;
-	private boolean askedForGoogle = false;
+	private static final int		REQUEST_CODE				= 0;
+	protected static final int		REQUEST_CODE_TOKEN			= 0;
+	private PlusClient				mPlusClient;
+	private ConnectionResult		mConnectionResult;
+	private boolean					askedForGoogle				= false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 
-		mPlusClient = new PlusClient.Builder(this, this, this).setActions("http://schemas.google.com/AddActivity", "http://schemas.google.com/BuyActivity")
-				.setScopes(Scopes.PLUS_LOGIN).build();
-		
+		mPlusClient = new PlusClient.Builder(this, this, this).setActions("http://schemas.google.com/AddActivity", "http://schemas.google.com/BuyActivity").setScopes(Scopes.PLUS_LOGIN).build();
+
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);
 		setContentView(R.layout.main_activity);
-
 		FragmentManager fm = getFragmentManager();
 		fragments[SOCIAL_CONNECTION_FRAGMENT] = fm.findFragmentById(R.id.socialConnectionFragment);
-		fragments[POSTS_FRAGMENT] = fm.findFragmentById(R.id.postListFragment);
-
+		fragments[MAIN_FRAGMENT] = fm.findFragmentById(R.id.mainFragment);
 		FragmentTransaction transaction = fm.beginTransaction();
 		for (int i = 0; i < fragments.length; i++)
 		{
@@ -77,25 +84,54 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 		}
 		transaction.commit();
 	}
-	
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		if (!onConnectionView)
+		{
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.main, menu);
+		}
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		// Handle presses on the action bar items
+		switch (item.getItemId())
+		{
+			case R.id.action_map:
+				MainFragment mainFragment = (MainFragment) fragments[MAIN_FRAGMENT];
+				if (mainFragment.isMapDisplayed())
+					mainFragment.changeToList();
+				else
+					mainFragment.changeToMap();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
 	@Override
 	protected void onStart()
 	{
 		super.onStart();
 		mPlusClient.connect();
 	}
-	
+
 	@Override
 	protected void onStop()
 	{
 		super.onStop();
 		mPlusClient.disconnect();
 	}
-	
+
 	@Override
 	public void onClick(View v)
 	{
-		if(v.getId() == R.id.google_sign_in_button)
+		if (v.getId() == R.id.google_sign_in_button)
 		{
 			askedForGoogle = true;
 			int available = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
@@ -110,6 +146,8 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 
 	private void showFragment(int fragmentIndex, boolean addToBackStack)
 	{
+		onConnectionView = fragmentIndex == SOCIAL_CONNECTION_FRAGMENT;
+		invalidateOptionsMenu();
 		FragmentManager fm = getFragmentManager();
 		FragmentTransaction transaction = fm.beginTransaction();
 		for (int i = 0; i < fragments.length; i++)
@@ -129,27 +167,26 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 		}
 		transaction.commit();
 	}
-	
+
 	@Override
 	public void onAccessRevoked(ConnectionResult result)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onConnectionFailed(ConnectionResult result)
 	{
 		mConnectionResult = result;
-		if (askedForGoogle)
-			try
-			{
-				mConnectionResult.startResolutionForResult(this, REQUEST_CODE);
-			}
-			catch (SendIntentException e)
-			{
-				e.printStackTrace();
-			}
+		if (askedForGoogle) try
+		{
+			mConnectionResult.startResolutionForResult(this, REQUEST_CODE);
+		}
+		catch (SendIntentException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -162,13 +199,13 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 	public void onDisconnected()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	private void getGoogleToken()
 	{
-		new AsyncTask<String, Void, String>()
-		{
+		Log.d(TAG, "getGoogleToken");
+		new AsyncTask<String, Void, String>() {
 
 			@Override
 			protected String doInBackground(String... params)
@@ -190,7 +227,8 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 
 			protected void onPostExecute(String token)
 			{
-				Log.d(LOG, "Server token = " + token);
+				Log.d(TAG, "Server token = " + token);
+				Log.d(TAG, "User id = " + mPlusClient.getCurrentPerson().getId());
 				loginToSucle(mPlusClient.getCurrentPerson().getId(), token, SocialType.GooglePlus);
 			};
 		}.execute(mPlusClient.getAccountName());
@@ -199,9 +237,9 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 	@Override
 	public void onLogin()
 	{
-		showFragment(POSTS_FRAGMENT, false);
+		showFragment(MAIN_FRAGMENT, false);
 	}
-	
+
 	private void onSessionStateChange(final Session session, SessionState state, Exception exception)
 	{
 		// Only make changes if the activity is visible
@@ -219,10 +257,9 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 			{
 				// If the session state is open:
 				// Show the authenticated fragment
-				
+
 				Log.d(FACEBOOK_LOG, "Access Token" + session.getAccessToken());
-				Request.newMeRequest(session, new Request.GraphUserCallback()
-				{
+				Request.newMeRequest(session, new Request.GraphUserCallback() {
 
 					@Override
 					public void onCompleted(GraphUser user, Response response)
@@ -231,9 +268,12 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 						{
 							Log.d(FACEBOOK_LOG, "User ID " + user.getId());
 							Log.d(FACEBOOK_LOG, "User Name " + user.getFirstName() + " " + user.getLastName());
-							/*Toast.makeText(MainActivity.this,
-									"Welcome : " + user.getFirstName() + " " + user.getLastName() + "\nYour User ID IS : " + user.getId(), Toast.LENGTH_SHORT)
-									.show();*/
+							/*
+							 * Toast.makeText(MainActivity.this, "Welcome : " +
+							 * user.getFirstName() + " " + user.getLastName() +
+							 * "\nYour User ID IS : " + user.getId(),
+							 * Toast.LENGTH_SHORT) .show();
+							 */
 							loginToSucle(user.getId(), session.getAccessToken(), SocialType.Facebook);
 						}
 					}
@@ -259,7 +299,7 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 		params[5] = Build.VERSION.CODENAME;
 		new LoginTask(MainActivity.this).execute(params);
 	}
-	
+
 	@Override
 	public void onResume()
 	{
@@ -271,7 +311,7 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 		{
 			// if the session is already open,
 			// try to show the selection fragment
-			showFragment(POSTS_FRAGMENT, false);
+			showFragment(MAIN_FRAGMENT, false);
 		}
 		else
 		{
@@ -324,6 +364,6 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 		uiHelper.onSaveInstanceState(outState);
 	}
 
-	private static final String FACEBOOK_LOG = "Log : Facebook";
-	private static final String LOG = "Log : " + MainActivity.class.getSimpleName();
+	private static final String	FACEBOOK_LOG	= "Log : Facebook";
+	private static final String	TAG				= "Log : " + MainActivity.class.getSimpleName();
 }

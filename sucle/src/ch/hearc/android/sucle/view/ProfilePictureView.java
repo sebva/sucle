@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ch.hearc.android.sucle;
+package ch.hearc.android.sucle.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;

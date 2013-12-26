@@ -1,4 +1,4 @@
-package ch.hearc.android.sucle;
+package ch.hearc.android.sucle.view;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,7 +12,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-import ch.hearc.android.sucle.FetchMessagesTask.FetchMessagesListener;
+import ch.hearc.android.sucle.R;
+import ch.hearc.android.sucle.Sucle;
+import ch.hearc.android.sucle.controller.FetchMessagesTask.FetchMessagesListener;
+import ch.hearc.android.sucle.controller.PostsAdapter;
+import ch.hearc.android.sucle.controller.PostsManager;
 import ch.hearc.android.sucle.model.Attachment;
 import ch.hearc.android.sucle.model.AttachmentType;
 import ch.hearc.android.sucle.model.Post;
@@ -40,7 +44,7 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 	{
 		super.onCreate(savedInstanceState);
 
-		postsAdapter = new PostsAdapter(this.getActivity(), R.layout.fragment_post_list);
+		postsAdapter = new PostsAdapter(this.getActivity(), R.layout.timeline_row_fragment);
 		setListAdapter(postsAdapter);
 
 		postsManager = new PostsManager(Sucle.getAppContext(), Integer.MAX_VALUE, 100, this);
@@ -97,7 +101,7 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 		// list item
 		// (We do this during onStart because at the point the listview is
 		// available.)
-		if (getFragmentManager().findFragmentById(R.id.postListFragment) != null)
+		if (getFragmentManager().findFragmentById(R.id.mainFragment) != null)
 		{
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		}

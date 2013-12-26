@@ -4,12 +4,19 @@
     android:layout_height="fill_parent"
     android:orientation="horizontal" >
 
-    <ch.hearc.android.sucle.ProfilePictureView
-        android:id="@+id/profilePictureView"
+    <ch.hearc.android.sucle.view.ProfilePictureView
+        android:id="@+id/profilePictureViewFB"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_margin="10dp" >
-    </ch.hearc.android.sucle.ProfilePictureView>
+    </ch.hearc.android.sucle.view.ProfilePictureView>
+
+    <ch.hearc.android.sucle.view.RoundedImageView
+        android:id="@+id/profilePictureViewGP"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_margin="10dp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="0dp"

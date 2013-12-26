@@ -6,14 +6,21 @@
 
     <fragment
         android:id="@+id/timelineFragment"
-        android:name="ch.hearc.android.sucle.TimelineFragment"
+        android:name="ch.hearc.android.sucle.view.TimelineFragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2" />
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="ch.hearc.android.sucle.view.MapFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2" />
 
     <fragment
         android:id="@+id/postDetailsFragment"
-        android:name="ch.hearc.android.sucle.PostDetailsFragment"
+        android:name="ch.hearc.android.sucle.view.PostDetailsFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2" />

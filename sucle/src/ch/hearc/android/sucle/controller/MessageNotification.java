@@ -1,5 +1,8 @@
-package ch.hearc.android.sucle;
+package ch.hearc.android.sucle.controller;
 
+import ch.hearc.android.sucle.R;
+import ch.hearc.android.sucle.R.drawable;
+import ch.hearc.android.sucle.R.string;
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;

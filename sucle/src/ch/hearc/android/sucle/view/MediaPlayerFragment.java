@@ -1,5 +1,8 @@
-package ch.hearc.android.sucle;
+package ch.hearc.android.sucle.view;
 
+import ch.hearc.android.sucle.R;
+import ch.hearc.android.sucle.R.id;
+import ch.hearc.android.sucle.R.layout;
 import android.app.Fragment;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
@@ -10,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.VideoView;
 
-public class PlayerFragment extends Fragment
+public class MediaPlayerFragment extends Fragment
 {
 
 	String		path	= null;
@@ -22,7 +25,7 @@ public class PlayerFragment extends Fragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		Log.e(PlayerFragment.class.getSimpleName(), "oncreate");
+		Log.e(MediaPlayerFragment.class.getSimpleName(), "oncreate");
 		View view = inflater.inflate(R.layout.player_fragment, container, false);
 
 		videoView = (VideoView) view.findViewById(R.id.videoView);

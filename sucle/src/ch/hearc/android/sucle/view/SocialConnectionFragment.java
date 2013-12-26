@@ -1,10 +1,14 @@
-package ch.hearc.android.sucle;
+package ch.hearc.android.sucle.view;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+
+import ch.hearc.android.sucle.R;
+import ch.hearc.android.sucle.R.id;
+import ch.hearc.android.sucle.R.layout;
 
 import com.google.android.gms.common.SignInButton;
 

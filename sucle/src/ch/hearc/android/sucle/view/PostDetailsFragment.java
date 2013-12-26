@@ -1,4 +1,4 @@
-package ch.hearc.android.sucle;
+package ch.hearc.android.sucle.view;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,6 +20,9 @@ import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
+import ch.hearc.android.sucle.R;
+import ch.hearc.android.sucle.R.id;
+import ch.hearc.android.sucle.R.layout;
 import ch.hearc.android.sucle.model.Post;
 
 public class PostDetailsFragment extends Fragment
@@ -44,7 +47,7 @@ public class PostDetailsFragment extends Fragment
 		}
 
 		// Inflate the layout for this fragment
-		view = inflater.inflate(R.layout.fragment_post_details, container, false);
+		view = inflater.inflate(R.layout.post_details_fragment, container, false);
 		return view;
 	}
 
@@ -83,7 +86,7 @@ public class PostDetailsFragment extends Fragment
 		postContent.setText(post.getMessage());
 		if (imageView != null) imageView.setVisibility(View.GONE);
 		if (videoView != null) videoView.setVisibility(View.GONE);
-		if (mediaPlayer.isPlaying())
+		if (mediaPlayer != null && mediaPlayer.isPlaying())
 		{
 			stopSound();
 		}

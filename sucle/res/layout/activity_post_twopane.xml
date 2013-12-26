@@ -10,7 +10,7 @@
     android:showDividers="middle" >
     <fragment
         android:id="@+id/post_list"
-        android:name="ch.hearc.android.sucle.TimelineFragment"
+        android:name="ch.hearc.android.sucle.view.TimelineFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

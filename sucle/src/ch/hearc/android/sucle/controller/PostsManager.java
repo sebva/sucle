@@ -1,4 +1,4 @@
-package ch.hearc.android.sucle;
+package ch.hearc.android.sucle.controller;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -11,7 +11,7 @@ import java.io.ObjectOutputStream;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
-import ch.hearc.android.sucle.FetchMessagesTask.FetchMessagesListener;
+import ch.hearc.android.sucle.controller.FetchMessagesTask.FetchMessagesListener;
 import ch.hearc.android.sucle.model.Post;
 
 public class PostsManager

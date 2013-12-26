@@ -1,4 +1,4 @@
-package ch.hearc.android.sucle;
+package ch.hearc.android.sucle.view;
 
 import java.net.URISyntaxException;
 

@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/socialConnectionFragment"
-        android:name="ch.hearc.android.sucle.SocialConnectionFragment"
+        android:name="ch.hearc.android.sucle.view.SocialConnectionFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     
     <fragment
-        android:id="@+id/postListFragment"
-        android:name="ch.hearc.android.sucle.PostsFragment"
+        android:id="@+id/mainFragment"
+        android:name="ch.hearc.android.sucle.view.MainFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

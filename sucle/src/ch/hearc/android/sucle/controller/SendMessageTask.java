@@ -1,4 +1,4 @@
-package ch.hearc.android.sucle;
+package ch.hearc.android.sucle.controller;
 
 import java.io.File;
 
@@ -10,6 +10,12 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
+
+import ch.hearc.android.sucle.R;
+import ch.hearc.android.sucle.Sucle;
+import ch.hearc.android.sucle.WebServicesInfo;
+import ch.hearc.android.sucle.R.string;
+import ch.hearc.android.sucle.WebServicesInfo.JSONKey;
 
 import android.os.AsyncTask;
 import android.util.Log;
