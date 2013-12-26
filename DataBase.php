@@ -65,7 +65,7 @@ class DataBase
                     $message = new Message(array('user' => $this->selectUser($d['user_id']),
                         'device' => $this->selectDevice($d['device_id']),
                         'lat' => $d['lat'], 'lon' => $d['lon'], 'datetime' => $d['datetime'],
-                        'mime' => $d['mime'], 'file' => $settings[Settings::WEBSITE].$d['file'], 'message' => $d['message']));
+                        'mime' => $d['mime'], 'file' => $settings[Settings::WEBSITE].'/'.$d['file'], 'message' => $d['message']));
                     $messages[] = array_merge($message->getInfo(), array('distance' => $distance));
                     $distances[] = $distance;
                     if(++$i > $nb)
@@ -210,7 +210,7 @@ class DataBase
     private function existsUser($social_id, $type, &$res)
     {
         $q = $this->pdo->prepare('SELECT * FROM `user` WHERE `social_id` = :social_id and `type` = :type');
-        $q->bindParam(':social_id', $social_id, PDO::PARAM_INT);
+        $q->bindParam(':social_id', $social_id, PDO::PARAM_STR);
         $q->bindParam(':type', $type, PDO::PARAM_STR);
         $q->execute();
 
@@ -282,7 +282,7 @@ class DataBase
         {
             $q = $this->pdo->prepare('INSERT INTO `user` VALUES(NULL, :inscription, :social_id, :type)');
             $q->bindParam(':inscription', $user->getInscription(), PDO::PARAM_STR);
-            $q->bindParam(':social_id', $user->getSocialId(), PDO::PARAM_INT);
+            $q->bindParam(':social_id', $user->getSocialId(), PDO::PARAM_STR);
             $q->bindParam(':type', $user->getType(), PDO::PARAM_STR);
             $q->execute();
 
@@ -293,7 +293,7 @@ class DataBase
             $q = $this->pdo->prepare('UPDATE `user` SET `inscription`=:inscription, `social_id` = :social_id, `type` = :type WHERE `id`=:id');
             $q->bindParam(':id', $user->getId(), PDO::PARAM_INT);
             $q->bindParam(':inscription', $user->getInscription(), PDO::PARAM_STR);
-            $q->bindParam(':social_id', $user->getSocialId(), PDO::PARAM_INT);
+            $q->bindParam(':social_id', $user->getSocialId(), PDO::PARAM_STR);
             $q->bindParam(':type', $user->getType(), PDO::PARAM_STR);
             $q->execute();
         }
