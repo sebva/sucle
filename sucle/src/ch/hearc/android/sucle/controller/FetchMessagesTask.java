@@ -111,7 +111,7 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 					else if(socialTypestr.equals(WebServicesInfo.JSONKey.USER_TYPE_GOOGLEPLUS))
 						socialType = SocialType.GooglePlus;
 					
-					User user = new User(userObject.getInt(WebServicesInfo.JSONKey.USER_SOCIAL_ID), socialType, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(userObject.getString(WebServicesInfo.JSONKey.USER_INSCRIPTION)));
+					User user = new User(userObject.getString(WebServicesInfo.JSONKey.USER_SOCIAL_ID), socialType, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(userObject.getString(WebServicesInfo.JSONKey.USER_INSCRIPTION)));
 					
 					Attachment attachment = null;
 					AttachmentType attachmentType = AttachmentType.Undefined;

@@ -8,7 +8,8 @@
         android:id="@+id/profilePictureViewFB"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_margin="10dp" >
+        android:layout_margin="10dp"
+        android:visibility="gone" >
     </ch.hearc.android.sucle.view.ProfilePictureView>
 
     <ch.hearc.android.sucle.view.RoundedImageView

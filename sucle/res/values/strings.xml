@@ -4,7 +4,7 @@
     <string name="app_name">Sucle</string>
     <string name="title_post_detail">Post Detail</string>
     <string name="app_id">170038059858161</string>
-    <string name="google_api_key">AIzaSyBFqfEdcehRMLp2lqexmwt4COetQ5qe45I</string>
+    <string name="google_api_key">AIzaSyDWxuiSZF-3uZR-afHLI8hmRfS-VHS2_xI</string>
     <string name="login_title">Login</string>
 
     <integer-array name="error_codes">

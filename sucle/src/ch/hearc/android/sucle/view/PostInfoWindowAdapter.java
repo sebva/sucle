@@ -4,17 +4,13 @@ import java.util.Date;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import ch.hearc.android.sucle.DownloadImageTask;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Sucle;
-import ch.hearc.android.sucle.R.drawable;
-import ch.hearc.android.sucle.R.id;
-import ch.hearc.android.sucle.R.layout;
-import ch.hearc.android.sucle.controller.PostsManager;
 import ch.hearc.android.sucle.model.Post;
 
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
@@ -51,7 +47,7 @@ public class PostInfoWindowAdapter implements InfoWindowAdapter
 		ImageView attachmentImageView = (ImageView) view.findViewById(R.id.attachmentImageView);
 
 		long delta = ((new Date()).getTime() - post.getTime().getTime());
-		username.setText(Integer.toString(post.getUser().getSocialId()));
+		username.setText(post.getUser().getSocialId());
 		username.setText(post.getUser().getName());
 		postContent.setText(post.getMessage());
 		location.setText(post.getPositionName());
@@ -79,18 +75,18 @@ public class PostInfoWindowAdapter implements InfoWindowAdapter
 		{
 			attachmentImageView.setVisibility(View.GONE);
 		}
-		
+
 		switch (post.getUser().getSocialType())
 		{
 			case Facebook:
 				userImageViewFB.setVisibility(View.VISIBLE);
 				userImageViewGP.setVisibility(View.GONE);
-				userImageViewFB.setProfileId(Integer.toString(post.getUser().getSocialId()));				
+				userImageViewFB.setProfileId(post.getUser().getSocialId());
 				break;
 			case GooglePlus:
 				userImageViewFB.setVisibility(View.GONE);
 				userImageViewGP.setVisibility(View.VISIBLE);
-				userImageViewGP.setImageURI(Uri.parse(post.getUser().getImageUrl()));
+				new DownloadImageTask(userImageViewGP).execute(post.getUser().getImageUrl());
 				break;
 
 			default:
@@ -125,5 +121,7 @@ public class PostInfoWindowAdapter implements InfoWindowAdapter
 		}
 		return agoString;
 	}
+
+	private static final String	TAG	= PostInfoWindowAdapter.class.getSimpleName();
 
 }

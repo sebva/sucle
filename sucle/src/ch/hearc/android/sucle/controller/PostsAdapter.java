@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import ch.hearc.android.sucle.DownloadImageTask;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.model.Post;
 import ch.hearc.android.sucle.view.ProfilePictureView;
+import ch.hearc.android.sucle.view.RoundedImageView;
 
 public class PostsAdapter extends ArrayAdapter<Post>
 {
@@ -33,12 +35,11 @@ public class PostsAdapter extends ArrayAdapter<Post>
 		Post post = getItem(position);
 
 		long delta = ((new Date()).getTime() - post.getTime().getTime());
-		viewHolder.username.setText(Integer.toString(post.getUser().getSocialId()));
+		viewHolder.username.setText(post.getUser().getSocialId());
 		viewHolder.username.setText(post.getUser().getName());
 		viewHolder.postContent.setText(post.getMessage());
 		viewHolder.location.setText(post.getPositionName());
 		viewHolder.postDate.setText(ago(delta));
-		viewHolder.userImageView.setProfileId(Integer.toString(post.getUser().getSocialId()));
 		if (post.getAttachment() != null)
 		{
 			switch (post.getAttachment().getAttachementType())
@@ -48,10 +49,12 @@ public class PostsAdapter extends ArrayAdapter<Post>
 					viewHolder.attachmentImageView.setImageBitmap(image);
 					break;
 				case Video:
-					viewHolder.attachmentImageView.setImageResource(android.R.drawable.ic_media_play);;
+					viewHolder.attachmentImageView.setImageResource(android.R.drawable.ic_media_play);
+					;
 					break;
 				case Sound:
-					viewHolder.attachmentImageView.setImageResource(R.drawable.ic_sound);;
+					viewHolder.attachmentImageView.setImageResource(R.drawable.ic_sound);
+					;
 					break;
 				default:
 					break;
@@ -61,6 +64,24 @@ public class PostsAdapter extends ArrayAdapter<Post>
 		else
 		{
 			viewHolder.attachmentImageView.setVisibility(View.GONE);
+		}
+
+		viewHolder.userImageViewFB.setProfileId(post.getUser().getSocialId());
+		switch (post.getUser().getSocialType())
+		{
+			case Facebook:
+				viewHolder.userImageViewFB.setVisibility(View.VISIBLE);
+				viewHolder.userImageViewGP.setVisibility(View.GONE);
+				viewHolder.userImageViewFB.setProfileId(post.getUser().getSocialId());
+				break;
+			case GooglePlus:
+				viewHolder.userImageViewFB.setVisibility(View.GONE);
+				viewHolder.userImageViewGP.setVisibility(View.VISIBLE);
+				new DownloadImageTask(viewHolder.userImageViewGP).execute(post.getUser().getImageUrl());
+				break;
+
+			default:
+				break;
 		}
 
 		return view;
@@ -121,7 +142,8 @@ public class PostsAdapter extends ArrayAdapter<Post>
 		{
 			viewHolder = new ViewHolder();
 
-			viewHolder.userImageView = (ProfilePictureView) workingView.findViewById(R.id.profilePictureViewFB);
+			viewHolder.userImageViewFB = (ProfilePictureView) workingView.findViewById(R.id.profilePictureViewFB);
+			viewHolder.userImageViewGP = (RoundedImageView) workingView.findViewById(R.id.profilePictureViewGP);
 			viewHolder.username = (TextView) workingView.findViewById(R.id.username);
 			viewHolder.postContent = (TextView) workingView.findViewById(R.id.postContent);
 			viewHolder.location = (TextView) workingView.findViewById(R.id.location);
@@ -145,7 +167,8 @@ public class PostsAdapter extends ArrayAdapter<Post>
 	 */
 	private static class ViewHolder
 	{
-		public ProfilePictureView	userImageView;
+		public ProfilePictureView	userImageViewFB;
+		public RoundedImageView		userImageViewGP;
 		public TextView				username;
 		public TextView				postContent;
 		public TextView				location;

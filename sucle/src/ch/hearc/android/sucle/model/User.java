@@ -23,14 +23,14 @@ import com.google.android.gms.plus.PlusClient;
 
 public class User implements Serializable
 {
-	private int			socialId;
+	private String		socialId;
 	private SocialType	socialType;
 	private Date		registration;
 	private String		name;
 	private PlusClient	client;
 	private String		imageUrl;
 
-	public User(int socialId, SocialType socialType, Date registration)
+	public User(String socialId, SocialType socialType, Date registration)
 	{
 		this.socialId = socialId;
 		this.socialType = socialType;
@@ -39,7 +39,7 @@ public class User implements Serializable
 		loadFullName();
 	}
 
-	public int getSocialId()
+	public String getSocialId()
 	{
 		return socialId;
 	}
@@ -75,7 +75,7 @@ public class User implements Serializable
 		switch (socialType)
 		{
 			case Facebook:
-				Request.newGraphPathRequest(null, Integer.toString(socialId), new Request.Callback() {
+				Request.newGraphPathRequest(null, socialId, new Request.Callback() {
 
 					@Override
 					public void onCompleted(Response response)
@@ -86,14 +86,15 @@ public class User implements Serializable
 										// is already called by a second thread
 				break;
 			case GooglePlus:
-				imageUrl = "https://plus.google.com/s2/photos/profile/" + Integer.toString(socialId);// ?sz=<your_desired_size>
+				imageUrl = "https://plus.google.com/s2/photos/profile/" + socialId;// ?sz=<your_desired_size>
 				new Thread(new Runnable() {
 
 					@Override
 					public void run()
 					{
-						String url = "https://www.googleapis.com/plus/v1/people/" + Integer.toString(socialId) + "?fields=displayName&key="
+						String url = "https://www.googleapis.com/plus/v1/people/" + socialId + "?fields=displayName&key="
 								+ Sucle.getAppContext().getResources().getString(R.string.google_api_key);
+						Log.e("", url);
 						StringBuilder json = new StringBuilder();
 						try
 						{
@@ -118,7 +119,7 @@ public class User implements Serializable
 						catch (Exception e)
 						{
 							Log.e("", e.toString());
-							name = Integer.toString(socialId);
+							name = socialId;
 						}
 					}
 				}).start();
@@ -151,7 +152,7 @@ public class User implements Serializable
 				break;
 
 			default:
-				name = Integer.toString(socialId);
+				name = socialId;
 				break;
 		}
 	}
