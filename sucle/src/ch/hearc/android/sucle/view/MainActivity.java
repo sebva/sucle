@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,9 +20,6 @@ import android.view.View.OnClickListener;
 import android.widget.Toast;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Tools;
-import ch.hearc.android.sucle.R.id;
-import ch.hearc.android.sucle.R.layout;
-import ch.hearc.android.sucle.R.menu;
 import ch.hearc.android.sucle.controller.LoginTask;
 import ch.hearc.android.sucle.model.SocialType;
 
@@ -34,12 +32,18 @@ import com.facebook.model.GraphUser;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.plus.PlusClient;
 
-public class MainActivity extends Activity implements PlusClient.ConnectionCallbacks, PlusClient.OnConnectionFailedListener, PlusClient.OnAccessRevokedListener, OnClickListener,
-		LoginTask.LoginListener
+public class MainActivity extends Activity implements PlusClient.OnAccessRevokedListener, OnClickListener,
+		LoginTask.LoginListener, GooglePlayServicesClient.ConnectionCallbacks,
+        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener
 {
 	private boolean					isResumed					= false;
 	private boolean					onConnectionView			= true;
@@ -63,6 +67,11 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 	private PlusClient				mPlusClient;
 	private ConnectionResult		mConnectionResult;
 	private boolean					askedForGoogle				= false;
+	private LocationRequest mLocationRequest;
+	private LocationClient mLocationClient;
+	private Location currentLocation = null;
+	private String mToken = null;
+	private String mDeviceId = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -83,6 +92,26 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 			transaction.hide(fragments[i]);
 		}
 		transaction.commit();
+		
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(60000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setFastestInterval(10000);
+
+        ConnectionCallbacks connectionCallbacks = new GooglePlayServicesClient.ConnectionCallbacks()
+		{	
+			@Override
+			public void onDisconnected()
+			{
+			}
+			
+			@Override
+			public void onConnected(Bundle connectionHint)
+			{
+				mLocationClient.requestLocationUpdates(mLocationRequest, MainActivity.this);
+			}
+		};
+        mLocationClient = new LocationClient(this, connectionCallbacks, this);
 	}
 
 	@Override
@@ -109,6 +138,19 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 				else
 					mainFragment.changeToMap();
 				return true;
+			case R.id.action_new_message:
+				if(currentLocation == null)
+				{
+					Toast.makeText(this, R.string.not_yet_located, Toast.LENGTH_SHORT).show();
+					return true;
+				}
+				Intent intent = new Intent(this, NewMessageActivity.class);
+				intent.putExtra("location", currentLocation);
+				intent.putExtra("deviceId", mDeviceId);
+				intent.putExtra("token", mToken);
+				//intent.putExtra("parent", parent);
+				startActivity(intent);
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -119,6 +161,7 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 	{
 		super.onStart();
 		mPlusClient.connect();
+		mLocationClient.connect();
 	}
 
 	@Override
@@ -126,6 +169,7 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 	{
 		super.onStop();
 		mPlusClient.disconnect();
+		mLocationClient.disconnect();
 	}
 
 	@Override
@@ -290,11 +334,13 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 
 	private void loginToSucle(String id, String token, SocialType type)
 	{
+		mToken = token;
 		String[] params = new String[6];
 		params[0] = id;
 		params[1] = type.toString();
 		params[2] = token;
-		params[3] = Tools.sha512(Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID));
+		mDeviceId = Tools.sha512(Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID));
+		params[3] = mDeviceId;
 		params[4] = "Android";
 		params[5] = Build.VERSION.CODENAME;
 		new LoginTask(MainActivity.this).execute(params);
@@ -366,4 +412,11 @@ public class MainActivity extends Activity implements PlusClient.ConnectionCallb
 
 	private static final String	FACEBOOK_LOG	= "Log : Facebook";
 	private static final String	TAG				= "Log : " + MainActivity.class.getSimpleName();
+
+	@Override
+	public void onLocationChanged(Location location)
+	{
+		currentLocation = location;
+		// refreshMessages();
+	}
 }

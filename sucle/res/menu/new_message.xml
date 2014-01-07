@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:id="@+id/action_attach_file" android:icon="@drawable/ic_action_attach_file" android:title="@string/attach_file" android:showAsAction="ifRoom">
+        <menu>
+            <item android:id="@+id/action_attach_photo" android:title="@string/photo"/>
+            <item android:id="@+id/action_attach_video" android:title="@string/video"/>
+            <item android:id="@+id/action_attach_audio" android:title="@string/audio"/>
+        </menu>
+    </item><item
+        android:id="@+id/action_post"
+        android:showAsAction="ifRoom"
+        android:title="@string/post_message" android:icon="@drawable/ic_action_post_message"/>
+    
+
+</menu>
