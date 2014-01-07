@@ -50,6 +50,7 @@ public final class WebServicesInfo {
 		public static final String MESSAGE_ID = "id";
 		public static final String MESSAGE_USER = "user";
 		public static final String MESSAGE_DEVICE = "device";
+		public static final String MESSAGE_PARENT = "parent";
 		public static final String MESSAGE_LAT = "lat";
 		public static final String MESSAGE_LONG = "lon";
 		public static final String MESSAGE_DATETIME = "datetime";

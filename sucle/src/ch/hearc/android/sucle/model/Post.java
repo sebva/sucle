@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class Post implements Serializable
 {
+	private int			id;
 	private User		user;
 	private LatLng		position;
 	private String		positionName;
@@ -21,8 +22,9 @@ public class Post implements Serializable
 	private Attachment	attachment;
 	private String		message;
 
-	public Post(User user, LatLng position, Date time, Attachment attachment, String message)
+	public Post(int id, User user, LatLng position, Date time, Attachment attachment, String message)
 	{
+		this.id = id;
 		this.user = user;
 		this.position = position;
 		this.time = time;
@@ -34,6 +36,7 @@ public class Post implements Serializable
 
 	private void writeObject(java.io.ObjectOutputStream out) throws IOException
 	{
+		out.writeObject(id);
 		out.writeObject(user);
 
 		out.writeDouble(position.latitude);
@@ -46,6 +49,7 @@ public class Post implements Serializable
 
 	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
 	{
+		id = (Integer) in.readObject();
 		user = (User) in.readObject();
 
 		position = new LatLng(in.readDouble(), in.readDouble());
@@ -85,6 +89,11 @@ public class Post implements Serializable
 		return positionName;
 	}
 
+	public int getId()
+	{
+		return id;
+	}
+	
 	@Override
 	public String toString()
 	{
