@@ -65,6 +65,7 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 	public void onPostsFetched()
 	{
 		Post[] posts = postsManager.getPost();
+		boolean noPostDisplay = postsAdapter.getCount() == 0;
 		if(posts != null)
 			for (final Post post : posts)
 			{
@@ -72,16 +73,12 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 			}
 		else
 			Log.i(TimelineFragment.class.getSimpleName(), "No post receive from server");
+		if(noPostDisplay && postsAdapter.getCount() > 0)
+			mCallback.onPostSelected(0);
 	}
 
 	private List<Post> getPostsEntries()
 	{
-
-		// Let's setup some test data.
-		// Normally this would come from some asynchronous fetch into a data
-		// source
-		// such as a sqlite database, or an HTTP request
-
 		final List<Post> posts = new ArrayList<Post>();
 
 		for (int i = 4; i < 50; i++)

@@ -29,9 +29,14 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 		 * // Add the fragment to the 'fragment_container' FrameLayout
 		 * getFragmentManager().beginTransaction().add(R.id.fragment_container,
 		 * timelineFragment).commit(); } else
-		 */if (getFragmentManager().findFragmentById(R.id.timelineFragment) != null)
+		 */
+		if (getFragmentManager().findFragmentById(R.id.timelineFragment) != null)
 		{
 			((TimelineFragment) getFragmentManager().findFragmentById(R.id.timelineFragment)).setCallback(this);
+		}
+		if (getFragmentManager().findFragmentById(R.id.mapFragment) != null)
+		{
+			((MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment)).setCallback(this);
 		}
 		return view;
 	}

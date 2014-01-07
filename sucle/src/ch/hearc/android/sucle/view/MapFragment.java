@@ -7,12 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.model.Post;
+import ch.hearc.android.sucle.view.TimelineFragment.OnPostSelectedListener;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapFragment extends Fragment implements TimelineFragment.OnPostSelectedListener
+public class MapFragment extends Fragment
 {
+	private OnPostSelectedListener	mCallback;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -20,6 +24,14 @@ public class MapFragment extends Fragment implements TimelineFragment.OnPostSele
 		View view = inflater.inflate(R.layout.map_fragment, container, false);
 		GoogleMap map = ((com.google.android.gms.maps.MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 		map.setInfoWindowAdapter(new PostInfoWindowAdapter(getActivity()));
+		map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+			
+			@Override
+			public void onInfoWindowClick(Marker marker)
+			{
+				mCallback.onPostSelected(Integer.parseInt(marker.getTitle()));
+			}
+		});
 		return view;
 	}
 
@@ -33,10 +45,15 @@ public class MapFragment extends Fragment implements TimelineFragment.OnPostSele
 		}
 	}
 
-	@Override
-	public void onPostSelected(int position)
+	public void setCallback(Fragment fragment)
 	{
-		// TODO Auto-generated method stub
-
+		try
+		{
+			mCallback = (OnPostSelectedListener) fragment;
+		}
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(fragment.toString() + " must implement OnPostSelectedListener");
+		}
 	}
 }
