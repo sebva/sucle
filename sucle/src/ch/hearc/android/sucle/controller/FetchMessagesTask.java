@@ -117,6 +117,7 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 					AttachmentType attachmentType = AttachmentType.Undefined;
 					String filePath = object.getString(WebServicesInfo.JSONKey.MESSAGE_FILE);
 					String mime = object.getString(WebServicesInfo.JSONKey.MESSAGE_MIME);
+					String id = object.getString(WebServicesInfo.JSONKey.MESSAGE_ID);
 					
 					if(WebServicesInfo.MIME_AUDIO.contains(mime))
 						attachmentType = AttachmentType.Sound;
@@ -129,7 +130,7 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 						attachment = new Attachment(null , attachmentType, filePath);
 					
 					
-					posts.add(new Post(user, 
+					posts.add(new Post(Integer.valueOf(id), user, 
 							new LatLng(Double.valueOf(object.getString(WebServicesInfo.JSONKey.MESSAGE_LAT)), 
 									Double.valueOf(object.getString(WebServicesInfo.JSONKey.MESSAGE_LONG))), 
 							new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(object.getString(WebServicesInfo.JSONKey.MESSAGE_DATETIME)), 

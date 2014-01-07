@@ -86,7 +86,7 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 
 		for (int i = 4; i < 50; i++)
 		{
-			posts.add(new Post(new User(Integer.toString(i), SocialType.Facebook, new Date()), new LatLng(47.546, 6.954), new Date(), new Attachment(new Object(), AttachmentType.Picture, "path"), "Dummy message"));
+			posts.add(new Post(0, new User(Integer.toString(i), SocialType.Facebook, new Date()), new LatLng(47.546, 6.954), new Date(), new Attachment(new Object(), AttachmentType.Picture, "path"), "Dummy message"));
 		}
 
 		return posts;
