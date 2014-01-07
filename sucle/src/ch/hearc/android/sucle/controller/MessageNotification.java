@@ -1,20 +1,15 @@
 package ch.hearc.android.sucle.controller;
 
-import ch.hearc.android.sucle.R;
-import ch.hearc.android.sucle.R.drawable;
-import ch.hearc.android.sucle.R.string;
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import ch.hearc.android.sucle.R;
 
 /**
  * Helper class for showing and canceling message notifications.
@@ -70,7 +65,8 @@ public class MessageNotification {
 		.setPriority(NotificationCompat.PRIORITY_DEFAULT)
 		.setLargeIcon(picture)
 		.setTicker(ticker)
-		.setAutoCancel(true);
+		.setAutoCancel(true)
+		.setOngoing(true);
 	}
 	
 	private static NotificationCompat.Builder notificationWithProgress(final Context context, final String text, final Bitmap picture, final String ticker, final String title)
@@ -83,7 +79,8 @@ public class MessageNotification {
 		.setLargeIcon(picture)
 		.setTicker(ticker)
 		.setAutoCancel(true)
-		.setProgress(0, 0, true);
+		.setProgress(0, 0, true)
+		.setOngoing(true);
 	}
 	
 	@TargetApi(Build.VERSION_CODES.ECLAIR)
