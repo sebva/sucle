@@ -119,7 +119,7 @@ class DataBase
         {
             $folder = $settings[Settings::UPLOAD].$message->getUser()->getId().'/';
             if(!file_exists($folder))
-                mkdir($folder, 0730, true);
+                mkdir(getenv('OPENSHIFT_DATA_DIR').$folder, 0730, true);
 
             $msg_file = $message->getFile();
             $filePath = $folder.uniqid().'.'.strtolower(substr(strrchr($msg_file['name'], '.'),1));

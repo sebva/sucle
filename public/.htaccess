@@ -1,0 +1,11 @@
+RewriteEngine on  
+RewriteCond %{HTTP:X-Forwarded-Proto} !https  
+RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R,L]  
+
+# If the file exists on the server, display it
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule "." - [skip=100]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule "." - [skip=100]
+
+RewriteRule ^uploads/([0-9]+)/([a-zA-Z0-9]+)\.([a-zA-Z0-9]+)$ getAttach.php?user=$1&file=$2&ext=$3 [QSA]
