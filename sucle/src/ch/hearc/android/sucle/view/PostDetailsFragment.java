@@ -10,19 +10,20 @@ import java.net.URLConnection;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 import ch.hearc.android.sucle.R;
-import ch.hearc.android.sucle.R.id;
-import ch.hearc.android.sucle.R.layout;
 import ch.hearc.android.sucle.model.Post;
 
 public class PostDetailsFragment extends Fragment
@@ -110,9 +111,32 @@ public class PostDetailsFragment extends Fragment
 					{
 						ViewGroup layout = (ViewGroup) view;
 						videoView = new VideoView(getActivity());
+						videoView.setOnTouchListener(new OnTouchListener() {
+							
+							@Override
+							public boolean onTouch(View v, MotionEvent event)
+							{
+								if(videoView.isPlaying())
+									videoView.pause();
+								else
+									videoView.start();
+								return false;
+							}
+						});
+						videoView.setOnPreparedListener(new OnPreparedListener() {
+						    @Override
+						    public void onPrepared(MediaPlayer mp) {
+						        mp.setLooping(true);
+						    }
+						});
 						layout.addView(videoView);
 					}
-					playVideoForPath(post.getAttachment().getFilePath());
+					//playVideoForPath(post.getAttachment().getFilePath());
+					//playVideoForPath("http://www.perezapp.ch/movie.mp4");
+					//playVideo("http://www.perezapp.ch/movie.mp4");
+					//playVideo(post.getAttachment().getFilePath());
+					videoView.setVideoPath(post.getAttachment().getFilePath());
+					videoView.start();
 					videoView.setVisibility(View.VISIBLE);
 					break;
 				case Sound:

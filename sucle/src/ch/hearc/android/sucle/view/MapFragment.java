@@ -29,7 +29,7 @@ public class MapFragment extends Fragment
 			@Override
 			public void onInfoWindowClick(Marker marker)
 			{
-				mCallback.onPostSelected(Integer.parseInt(marker.getTitle()));
+				mCallback.onPostSelected(Integer.parseInt(marker.getTitle()), false);
 			}
 		});
 		return view;

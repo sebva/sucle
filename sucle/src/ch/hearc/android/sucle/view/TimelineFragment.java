@@ -35,8 +35,9 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 	// deliver messages
 	public interface OnPostSelectedListener
 	{
-		/** Called by HeadlinesFragment when a list item is selected */
-		public void onPostSelected(int position);
+		/** Called by HeadlinesFragment when a list item is selected 
+		 * @param tabletOnly */
+		public void onPostSelected(int position, boolean tabletOnly);
 	}
 
 	@Override
@@ -74,7 +75,7 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 		else
 			Log.i(TimelineFragment.class.getSimpleName(), "No post receive from server");
 		if(noPostDisplay && postsAdapter.getCount() > 0)
-			mCallback.onPostSelected(0);
+			mCallback.onPostSelected(0, true);
 	}
 
 	private List<Post> getPostsEntries()
@@ -108,7 +109,7 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 	public void onListItemClick(ListView l, View v, int position, long id)
 	{
 		// Notify the parent activity of selected item
-		mCallback.onPostSelected(position);
+		mCallback.onPostSelected(position, false);
 
 		// Set the item as checked to be highlighted when in two-pane layout
 		//getListView().setItemChecked(position, true);

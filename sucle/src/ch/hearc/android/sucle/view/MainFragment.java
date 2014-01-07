@@ -82,7 +82,7 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 	}
 
 	@Override
-	public void onPostSelected(int position)
+	public void onPostSelected(int position, boolean tabletOnly)
 	{
 		PostDetailsFragment postDetailsFragment = (PostDetailsFragment) getFragmentManager().findFragmentById(R.id.postDetailsFragment);
 
@@ -90,7 +90,7 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 		{
 			postDetailsFragment.updatePostView(position);
 		}
-		else
+		else if(!tabletOnly)
 		{
 			PostDetailsFragment newFragment = new PostDetailsFragment();
 			Bundle args = new Bundle();
