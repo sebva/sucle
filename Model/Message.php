@@ -23,6 +23,7 @@ class Message
         $this->mime = isset($data['mime']) ? $data['mime'] : null;
         $this->file = isset($data['file']) ? $data['file'] : null;
         $this->message = isset($data['message']) ? $data['message'] : null;
+		$this->parentt = isset($data['parent']) ? $data['parent'] : null;
     }
 
     public function getInfo()
@@ -30,6 +31,7 @@ class Message
         return array('id' => $this->id,
             'user' => $this->user->getInfo(),
             'device' => $this->device->getInfo(),
+			'parent' => $this->parentt,
             'lat' => $this->lat,
             'lon' => $this->lon,
             'datetime' => $this->datetime,
@@ -94,6 +96,14 @@ class Message
         return $this->mime;
     }
 
+	    /**
+     * @return mixed
+     */
+    public function getParent()
+    {
+        return $this->parentt;
+    }
+	
     /**
      * @return mixed
      */
@@ -166,6 +176,14 @@ class Message
         $this->user = $user;
     }
 
+	    /**
+     * @param null $message
+     */
+    public function setParent($parent)
+    {
+        $this->parentt = $parent;
+    }
+	
     /**
      * @param null $message
      */

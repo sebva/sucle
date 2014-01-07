@@ -17,11 +17,11 @@ class Settings
     public static function getSettings()
     {
         return array(
-            self::HOST => 'localhost',
-            self::USER => 'root',
-            self::PASSWORD => '',
+            self::HOST => '127.7.189.130',
+            self::USER => 'adminHjGYxtU',
+            self::PASSWORD => 'v2tFq4Tdb_15',
             self::DATABASE => 'sucle',
-            self::WEBSITE => 'http://localhost/public/',
+            self::WEBSITE => 'https://sucle-diego999.rhcloud.com',
             self::UPLOAD => 'uploads/',
             self::MAX_SIZE_FILE => 30*1024*1024,
             self::LEN_MESSAGE_MAX => 160,

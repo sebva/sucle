@@ -62,8 +62,9 @@ class DataBase
                 $distance = DataBase::distance(floatval($lat), floatval($lon), floatval($d['lat']), floatval($d['lon']));
                 if($distance <= $radius)
                 {
-                    $message = new Message(array('user' => $this->selectUser($d['user_id']),
+                    $message = new Message(array('id' => $d['id'],'user' => $this->selectUser($d['user_id']),
                         'device' => $this->selectDevice($d['device_id']),
+						'parent' => $d['parent'],
                         'lat' => $d['lat'], 'lon' => $d['lon'], 'datetime' => $d['datetime'],
                         'mime' => $d['mime'], 'file' => $settings[Settings::WEBSITE].'/'.$d['file'], 'message' => $d['message']));
                     $messages[] = array_merge($message->getInfo(), array('distance' => $distance));
@@ -75,6 +76,31 @@ class DataBase
 
             array_multisort($distances, $messages);
         }
+        return json_encode(array('status' => 'OK', 'messages' => $messages));
+    }
+
+    public function getComments($parent)
+    {
+        $q = $this->pdo->prepare('SELECT * FROM `message` WHERE `parent`=:parent ORDER BY `id` DESC');
+        $q->bindParam(':parent', $parent, PDO::PARAM_INT);
+        $q->execute();
+
+        $data = $q->fetchAll(PDO::FETCH_ASSOC);
+        $q->closeCursor();
+
+        $messages = array();
+        $settings = Settings::getSettings();
+        if(is_array($data))
+            foreach($data as $d)
+            {
+                $message = new Message(array('id' => $d['id'],'user' => $this->selectUser($d['user_id']),
+                    'device' => $this->selectDevice($d['device_id']),
+                    'parent' => $d['parent'],
+                    'lat' => $d['lat'], 'lon' => $d['lon'], 'datetime' => $d['datetime'],
+                    'mime' => $d['mime'], 'file' => $settings[Settings::WEBSITE].'/'.$d['file'], 'message' => $d['message']));
+                $messages[] = $message->getInfo();
+            }
+
         return json_encode(array('status' => 'OK', 'messages' => $messages));
     }
 
@@ -97,7 +123,7 @@ class DataBase
 
             $msg_file = $message->getFile();
             $filePath = $folder.uniqid().'.'.strtolower(substr(strrchr($msg_file['name'], '.'),1));
-            if(move_uploaded_file($msg_file['tmp_name'], $filePath))
+            if(move_uploaded_file($msg_file['tmp_name'], getenv('OPENSHIFT_DATA_DIR').$filePath))
                 $message->setFile($filePath);
             else
                 return DataBase::errorCode(505);
@@ -324,9 +350,10 @@ class DataBase
 
     private function insertMessage(Message &$message)
     {
-        $q = $this->pdo->prepare('INSERT INTO `message` VALUES(NULL, :user_id, :device_id, :lat, :lon, :datetime, :message, :mime, :file)');
+        $q = $this->pdo->prepare('INSERT INTO `message` VALUES(NULL, :user_id, :device_id, :parent, :lat, :lon, :datetime, :message, :mime, :file)');
         $q->bindParam(':user_id', $message->getUser()->getId(), PDO::PARAM_INT);
         $q->bindParam(':device_id', $message->getDevice()->getId(), PDO::PARAM_INT);
+        $q->bindParam(':parent', $message->getParent(), PDO::PARAM_INT);
         $q->bindParam(':lat', $message->getLat(), PDO::PARAM_STR);
         $q->bindParam(':lon', $message->getLon(), PDO::PARAM_STR);
         $q->bindParam(':datetime', $message->getDatetime(), PDO::PARAM_STR);

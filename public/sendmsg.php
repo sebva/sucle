@@ -7,7 +7,10 @@ if(isset($_POST['token'], $_POST['device_id'], $_POST['lat'], $_POST['lon'], $_P
     && !empty($_POST['token']) && !empty($_POST['device_id']) && !empty($_POST['lat']) && !empty($_POST['lon']) && !empty($_POST['message'])
     && is_numeric($_POST['lat']) && is_numeric($_POST['lon']))
 {
-    $message = new Message(array('lat' => $_POST['lat'], 'lon' => $_POST['lon'], 'datetime' => date("Y-m-d H:i:s"), 'message' => $_POST['message']));
+    $message = new Message(array('lat' => $_POST['lat'], 'lon' => $_POST['lon'], 'datetime' => date("Y-m-d H:i:s"), 'message' => $_POST['message'], 'parent' => $_POST['parent']));
+
+    if(isset($_POST['parent']) && is_numeric($_POST['parent']))
+        $message->setParent($_POST['parent']);
 
     if(isset($_FILES['file']) && strlen($_FILES['file']['name']) > 0)
     {
