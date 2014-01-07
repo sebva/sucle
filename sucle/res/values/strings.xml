@@ -47,5 +47,11 @@
     <string name="action_share">Share</string>
     <string name="action_reply">Reply</string>
     <string name="action_map">Map</string>
-
+    <string name="new_message">New message</string>
+    <string name="title_activity_new_message">NewMessageActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="post_message">Post message</string>
+    <string name="attach_file">Attach file</string>
+	<string name="not_yet_located">You can\'t send messages for the moment, as we don\'t yet know where you are.</string>
 </resources>
