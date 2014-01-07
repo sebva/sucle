@@ -54,4 +54,7 @@
     <string name="post_message">Post message</string>
     <string name="attach_file">Attach file</string>
 	<string name="not_yet_located">You can\'t send messages for the moment, as we don\'t yet know where you are.</string>
+	<string name="photo">Photo</string>
+	<string name="video">Video</string>
+	<string name="audio">Audio</string>
 </resources>

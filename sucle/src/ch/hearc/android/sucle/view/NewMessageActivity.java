@@ -2,8 +2,12 @@ package ch.hearc.android.sucle.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +19,7 @@ import ch.hearc.android.sucle.controller.SendMessageTask;
 public class NewMessageActivity extends Activity
 {
 	
+	private static final int RESULT_LOAD_MEDIA = 0;
 	private Location mLocation;
 	private int mParentMessageId;
 	private String mToken;
@@ -63,6 +68,7 @@ public class NewMessageActivity extends Activity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
+		Intent i;
 		switch (item.getItemId())
 		{
 			case android.R.id.home:
@@ -78,11 +84,36 @@ public class NewMessageActivity extends Activity
 			case R.id.action_post:
 				postMessage();
 				break;
-			case R.id.action_attach_file:
-				// TODO
+			case R.id.action_attach_photo:
+				i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+				startActivityForResult(i, RESULT_LOAD_MEDIA);
+				break;
+			case R.id.action_attach_video:
+				i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+				startActivityForResult(i, RESULT_LOAD_MEDIA);
+				break;
+			case R.id.action_attach_audio:
+				i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+				startActivityForResult(i, RESULT_LOAD_MEDIA);
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == RESULT_LOAD_MEDIA && resultCode == RESULT_OK && null != data)
+		{
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            Cursor cursor = getContentResolver().query(selectedImage,filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            mFilePath = cursor.getString(columnIndex);
+            cursor.close();
+        }
 	}
 
 	private void postMessage()
