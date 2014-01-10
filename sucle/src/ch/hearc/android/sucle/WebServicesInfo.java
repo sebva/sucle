@@ -14,6 +14,7 @@ public final class WebServicesInfo {
 
 	public static final String BASE_URL = "https://sucle-diego999.rhcloud.com";
 	public static final String URL_GET_MESSAGE = BASE_URL + "/" + "getmsg.php"; // with GET parameters
+	public static final String URL_GET_COMMENT = BASE_URL + "/" + "getcmt.php"; // with GET parameters
 	public static final String URL_LOGIN = BASE_URL + "/" + "login.php";
 	public static final String URL_SEND_MESSAGE = BASE_URL + "/" + "sendmsg.php";
 	

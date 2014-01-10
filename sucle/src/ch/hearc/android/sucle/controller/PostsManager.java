@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+import ch.hearc.android.sucle.controller.FetchCommentsTask.FetchCommentsListener;
 import ch.hearc.android.sucle.controller.FetchMessagesTask.FetchMessagesListener;
 import ch.hearc.android.sucle.model.Post;
 
@@ -19,22 +20,26 @@ public class PostsManager
 	
 	private static final String TAG = "PostsManager";
 	private Post[] posts;
+	private Post[] comments;
 	private double radius;
 	private Location location;
 	private int nbMessage;
-	private FetchMessagesListener listener;
+	private FetchMessagesListener listenerMessage;
+	private FetchCommentsListener listenerComment;
 	private Context context;
 	
 	private static final String FILE = "posts";
 	
-	public PostsManager(Context context, double radius, int nbMessages, FetchMessagesListener listener)
+	public PostsManager(Context context, double radius, int nbMessages, FetchMessagesListener listenerM, FetchCommentsListener listenerC)
 	{
 		this.context = context;
 		this.radius = radius;
 		this.location = null;
 		this.nbMessage = nbMessages;
-		this.listener = listener;
+		this.listenerMessage = listenerM;
+		this.listenerComment = listenerC;
 		posts = null;
+		comments = null;
 	}
 	
 	public void restorePosts()
@@ -83,7 +88,7 @@ public class PostsManager
 	
 	public void getNearbyPosts()
 	{
-		if(listener == null)
+		if(listenerMessage == null)
 			return;
 		
 		Object[] params = new Object[3];
@@ -91,7 +96,17 @@ public class PostsManager
 		params[1] = radius;
 		params[2] = nbMessage;
 		
-		new FetchMessagesTask(listener, this).execute(params);
+		new FetchMessagesTask(listenerMessage, this).execute(params);
+	}
+	
+	public void getComments(int id)
+	{
+		if(listenerComment == null)
+			return;
+		Object[] params = new Object[1];
+		params[0] = id;
+		
+		new FetchCommentsTask(listenerComment, this).execute(params);
 	}
 	
 	public void onLocationChanged(Location location)
@@ -119,9 +134,14 @@ public class PostsManager
 		this.nbMessage = nbMessage;
 	}
 
-	public void setListener(FetchMessagesListener listener)
+	public void setListenerMessage(FetchMessagesListener listener)
 	{
-		this.listener = listener;
+		this.listenerMessage = listener;
+	}
+	
+	public void setListenerComment(FetchCommentsListener listener)
+	{
+		this.listenerComment = listener;
 	}
 	
 	public void setPosts(Post[] posts)
@@ -129,8 +149,18 @@ public class PostsManager
 		this.posts = posts;
 	}
 	
+	public void setComments(Post[] comments)
+	{
+		this.comments = comments;
+	}
+	
 	public Post[] getPost()
 	{
 		return posts;
+	}
+	
+	public Post[] getComment()
+	{
+		return comments;
 	}
 }
