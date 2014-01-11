@@ -66,13 +66,13 @@ public class MessageNotification {
 		.setLargeIcon(picture)
 		.setTicker(ticker)
 		.setAutoCancel(true)
-		.setOngoing(true);
+		.setOngoing(false);
 	}
 	
 	private static NotificationCompat.Builder notificationWithProgress(final Context context, final String text, final Bitmap picture, final String ticker, final String title)
 	{
 		return new NotificationCompat.Builder(context)
-		.setDefaults(Notification.DEFAULT_ALL)
+		.setDefaults(Notification.DEFAULT_LIGHTS)
 		.setSmallIcon(R.drawable.ic_stat_message)
 		.setContentTitle(title).setContentText(text)
 		.setPriority(NotificationCompat.PRIORITY_DEFAULT)

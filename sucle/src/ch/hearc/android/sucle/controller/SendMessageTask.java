@@ -71,7 +71,7 @@ public class SendMessageTask extends AsyncTask<String, Void, Void>
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			error = Sucle.getAppContext().getResources().getString(R.string.error_internet_request);
+			error = e.getMessage();
 			return null;
 		}
 		
