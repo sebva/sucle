@@ -47,7 +47,7 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 		postsAdapter = new PostsAdapter(this.getActivity(), R.layout.timeline_row_fragment);
 		setListAdapter(postsAdapter);
 
-		postsManager = new PostsManager(Sucle.getAppContext(), Integer.MAX_VALUE, 100, this);
+		postsManager = new PostsManager(Sucle.getAppContext(), Integer.MAX_VALUE, 100, this, null);
 		Location location = new Location(LocationManager.GPS_PROVIDER);
 		location.setLatitude(45);
 		location.setLongitude(6);
