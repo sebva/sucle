@@ -52,7 +52,7 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 			MessageNotification.basicNotification(Sucle.getAppContext(), error);
 		else
 		{
-			postsManager.setPosts(result);
+			postsManager.addNewPosts(result);
 			listenerFML.onPostsFetched();
 		}
 	}

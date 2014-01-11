@@ -99,6 +99,18 @@ public class Post implements Serializable
 	{
 		return "(" + position.latitude + ";" + position.longitude + ") " + time + " " + user + " " + attachment + " " + message;
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		return id;
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		return id == ((Post)o).id;
+	}
 
 	private void fetchPositionName()
 	{

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import ch.hearc.android.sucle.DownloadImageTask;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Sucle;
+import ch.hearc.android.sucle.controller.PostsManager;
 import ch.hearc.android.sucle.model.Post;
 
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
@@ -35,7 +36,7 @@ public class PostInfoWindowAdapter implements InfoWindowAdapter
 	@Override
 	public View getInfoWindow(Marker marker)
 	{
-		Post post = TimelineFragment.postsAdapter.getItem(Integer.parseInt(marker.getTitle()));
+		Post post = PostsManager.getInstance().getPosts()[Integer.parseInt(marker.getTitle())];
 		view.setBackgroundColor(Sucle.getAppContext().getResources().getColor(R.color.white));
 
 		ProfilePictureView userImageViewFB = (ProfilePictureView) view.findViewById(R.id.profilePictureViewFB);

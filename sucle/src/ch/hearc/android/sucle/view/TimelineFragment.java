@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ListView;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Sucle;
+import ch.hearc.android.sucle.controller.FetchCommentsTask.FetchCommentsListener;
 import ch.hearc.android.sucle.controller.FetchMessagesTask.FetchMessagesListener;
 import ch.hearc.android.sucle.controller.PostsAdapter;
 import ch.hearc.android.sucle.controller.PostsManager;
@@ -28,8 +29,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class TimelineFragment extends ListFragment implements FetchMessagesListener
 {
 	private OnPostSelectedListener	mCallback;
-	private PostsManager postsManager;
-	static public PostsAdapter postsAdapter; //TODO: better
+	private PostsAdapter postsAdapter; //TODO: better
 
 	// The container Activity must implement this interface so the frag can
 	// deliver messages
@@ -48,46 +48,27 @@ public class TimelineFragment extends ListFragment implements FetchMessagesListe
 		postsAdapter = new PostsAdapter(this.getActivity(), R.layout.timeline_row_fragment);
 		setListAdapter(postsAdapter);
 
-		postsManager = new PostsManager(Sucle.getAppContext(), Integer.MAX_VALUE, 100, this);
-		Location location = new Location(LocationManager.GPS_PROVIDER);
-		location.setLatitude(45);
-		location.setLongitude(6);
-		postsManager.onLocationChanged(location);
-		postsManager.getNearbyPosts();
-		
-		// Populate the list, through the adapter
-//		for (final Post post : getPostsEntries())
-//		{
-//			postsAdapter.add(post);
-//		}
+		PostsManager postsManager = PostsManager.getInstance();
+		postsManager.setListenerMessage(this);
 	}
 
 	@Override
 	public void onPostsFetched()
 	{
-		Post[] posts = postsManager.getPost();
+		Post[] posts = PostsManager.getInstance().getPosts();
 		boolean noPostDisplay = postsAdapter.getCount() == 0;
 		if(posts != null)
+		{
 			for (final Post post : posts)
 			{
-				postsAdapter.add(post);
+				if(postsAdapter.getPosition(post) == -1)
+					postsAdapter.add(post);
 			}
+		}
 		else
 			Log.i(TimelineFragment.class.getSimpleName(), "No post receive from server");
 		if(noPostDisplay && postsAdapter.getCount() > 0)
 			mCallback.onPostSelected(0, true);
-	}
-
-	private List<Post> getPostsEntries()
-	{
-		final List<Post> posts = new ArrayList<Post>();
-
-		for (int i = 4; i < 50; i++)
-		{
-			posts.add(new Post(0, new User(Integer.toString(i), SocialType.Facebook, new Date()), new LatLng(47.546, 6.954), new Date(), new Attachment(new Object(), AttachmentType.Picture, "path"), "Dummy message"));
-		}
-
-		return posts;
 	}
 
 	@Override
