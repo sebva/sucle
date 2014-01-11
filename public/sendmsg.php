@@ -29,7 +29,6 @@ if(isset($_POST['token'], $_POST['device_id'], $_POST['lat'], $_POST['lon'], $_P
         if(!$ok)
             die(DataBase::errorCode(404));
 
-        $message->setMime($file['type']);
         $message->setFile($file);
     }
 
