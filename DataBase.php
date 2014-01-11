@@ -45,7 +45,7 @@ class DataBase
             $settings = Settings::getSettings();
             $nb = $settings[Settings::DEFAULT_NB_MESSAGE];
         }
-        $q = $this->pdo->prepare('SELECT * FROM `message` ORDER BY `id` DESC');
+        $q = $this->pdo->prepare('SELECT * FROM `message` WHERE `parent` IS NULL ORDER BY `id` DESC');
         $q->execute();
 
         $data = $q->fetchAll(PDO::FETCH_ASSOC);
@@ -124,7 +124,12 @@ class DataBase
             $msg_file = $message->getFile();
             $filePath = $folder.uniqid().'.'.strtolower(substr(strrchr($msg_file['name'], '.'),1));
             if(move_uploaded_file($msg_file['tmp_name'], getenv('OPENSHIFT_DATA_DIR').$filePath))
+            {
                 $message->setFile($filePath);
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $message->setMime(finfo_file($finfo, getenv('OPENSHIFT_DATA_DIR').$filePath));
+                finfo_close($finfo);
+            }
             else
                 return DataBase::errorCode(505);
         }
