@@ -21,7 +21,7 @@ public final class WebServicesInfo {
 	public static final String URL_SEND_MESSAGE = BASE_URL + "/" + "sendmsg.php";
 	
 	public static final Set<String> MIME_IMAGE = new HashSet<String>(Arrays.asList(new String[]{"image/jpeg", "image/png", "image/gif", "image/jpg"}));
-	public static final Set<String> MIME_AUDIO = new HashSet<String>(Arrays.asList(new String[]{"audio/mp3", "audio/3gp", "audio/mp4", "audio/m4a", "audio/ogg", "audio/wav"}));
+	public static final Set<String> MIME_AUDIO = new HashSet<String>(Arrays.asList(new String[]{"audio/mp3", "audio/mpeg", "audio/3gp", "audio/mp4", "audio/m4a", "audio/ogg", "audio/wav", "application/ogg"}));
 	public static final Set<String> MIME_VIDEO = new HashSet<String>(Arrays.asList(new String[]{"video/mp4", "video/mov", "video/m4v", "video/webm", "video/3gpp"}));
 	
 	public static class JSONKey
