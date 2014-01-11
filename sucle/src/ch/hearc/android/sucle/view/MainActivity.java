@@ -21,6 +21,7 @@ import android.widget.Toast;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Tools;
 import ch.hearc.android.sucle.controller.LoginTask;
+import ch.hearc.android.sucle.controller.PostsManager;
 import ch.hearc.android.sucle.model.SocialType;
 
 import com.facebook.Request;
@@ -417,6 +418,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 	public void onLocationChanged(Location location)
 	{
 		currentLocation = location;
-		// refreshMessages();
+		Log.e(TAG, "New location " + location.toString());
+		PostsManager.getInstance().onLocationChanged(location);
 	}
 }

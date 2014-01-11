@@ -12,14 +12,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import android.location.Location;
 import android.os.AsyncTask;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Sucle;
 import ch.hearc.android.sucle.WebServicesInfo;
-import ch.hearc.android.sucle.R.string;
-import ch.hearc.android.sucle.WebServicesInfo.JSONKey;
-import ch.hearc.android.sucle.controller.FetchMessagesTask.FetchMessagesListener;
 import ch.hearc.android.sucle.model.Attachment;
 import ch.hearc.android.sucle.model.AttachmentType;
 import ch.hearc.android.sucle.model.Post;
@@ -53,7 +49,7 @@ public class FetchCommentsTask extends AsyncTask<Object, Void, Post[]>
 			MessageNotification.basicNotification(Sucle.getAppContext(), error);
 		else
 		{
-			postsManager.setPosts(result);
+			postsManager.setComments(result);
 			listenerFCL.onCommentsFetched();
 		}
 	}

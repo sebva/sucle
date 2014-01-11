@@ -94,7 +94,6 @@ public class User implements Serializable
 					{
 						String url = "https://www.googleapis.com/plus/v1/people/" + socialId + "?fields=displayName&key="
 								+ Sucle.getAppContext().getResources().getString(R.string.google_api_key);
-						Log.e("", url);
 						StringBuilder json = new StringBuilder();
 						try
 						{
@@ -112,13 +111,13 @@ public class User implements Serializable
 							}
 							is.close();
 
-							Log.e("", json.toString());
+							Log.e(TAG, json.toString());
 							JSONObject jsonObject = new JSONObject(json.toString());
 							name = jsonObject.getString("displayName");
 						}
 						catch (Exception e)
 						{
-							Log.e("", e.toString());
+							Log.e(TAG, e.toString());
 							name = socialId;
 						}
 					}

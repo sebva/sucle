@@ -10,19 +10,22 @@ import java.net.URLConnection;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
+import ch.hearc.android.sucle.DownloadImageTask;
 import ch.hearc.android.sucle.R;
-import ch.hearc.android.sucle.R.id;
-import ch.hearc.android.sucle.R.layout;
+import ch.hearc.android.sucle.controller.PostsManager;
 import ch.hearc.android.sucle.model.Post;
 
 public class PostDetailsFragment extends Fragment
@@ -80,10 +83,33 @@ public class PostDetailsFragment extends Fragment
 	{
 		if (position == currentPosition) return;
 		currentPosition = position;
-		Post post = TimelineFragment.postsAdapter.getItem(position);
+		Post post = PostsManager.getInstance().getPosts()[position];
 		TextView postContent = (TextView) view.findViewById(R.id.postContentDetails);
+		TextView profileName = (TextView) view.findViewById(R.id.profileName);
 
+		ProfilePictureView userImageViewFB = (ProfilePictureView) view.findViewById(R.id.profilePictureViewFB);
+		RoundedImageView userImageViewGP = (RoundedImageView) view.findViewById(R.id.profilePictureViewGP);
+
+		switch (post.getUser().getSocialType())
+		{
+			case Facebook:
+				userImageViewFB.setVisibility(View.VISIBLE);
+				userImageViewGP.setVisibility(View.GONE);
+				userImageViewFB.setProfileId(post.getUser().getSocialId());
+				break;
+			case GooglePlus:
+				userImageViewFB.setVisibility(View.GONE);
+				userImageViewGP.setVisibility(View.VISIBLE);
+				new DownloadImageTask(userImageViewGP).execute(post.getUser().getImageUrl());
+				break;
+
+			default:
+				break;
+		}
+
+		profileName.setText(post.getUser().getName());
 		postContent.setText(post.getMessage());
+
 		if (imageView != null) imageView.setVisibility(View.GONE);
 		if (videoView != null) videoView.setVisibility(View.GONE);
 		if (mediaPlayer != null && mediaPlayer.isPlaying())
@@ -110,9 +136,36 @@ public class PostDetailsFragment extends Fragment
 					{
 						ViewGroup layout = (ViewGroup) view;
 						videoView = new VideoView(getActivity());
+						// videoView.setMediaController(new
+						// MediaController(getActivity()));
+						videoView.requestFocus();
+						videoView.start();
+						videoView.setOnTouchListener(new OnTouchListener() {
+
+							@Override
+							public boolean onTouch(View v, MotionEvent event)
+							{
+								if (videoView.isPlaying())
+									videoView.pause();
+								else
+									videoView.start();
+								return false;
+							}
+						});
+						videoView.setOnPreparedListener(new OnPreparedListener() {
+							@Override
+							public void onPrepared(MediaPlayer mp)
+							{
+								mp.setLooping(true);
+								videoView.start();
+								Log.e(TAG, "ready");
+							}
+						});
 						layout.addView(videoView);
 					}
+
 					playVideoForPath(post.getAttachment().getFilePath());
+
 					videoView.setVisibility(View.VISIBLE);
 					break;
 				case Sound:
@@ -162,20 +215,13 @@ public class PostDetailsFragment extends Fragment
 							if (numread <= 0) break;
 							out.write(buf, 0, numread);
 						} while (true);
-						try
-						{
-							out.close();
-							stream.close();
-						}
-						catch (IOException ex)
-						{
-							Log.e(TAG, "error: " + ex.getMessage(), ex);
-						}
+						out.close();
+						stream.close();
 						playVideo(tempPath);
 					}
 					catch (IOException e)
 					{
-						e.printStackTrace();
+						Log.e(TAG, e.getMessage());
 					}
 				}
 			}).start();
@@ -190,7 +236,7 @@ public class PostDetailsFragment extends Fragment
 			public void run()
 			{
 				videoView.setVideoPath(path);
-				videoView.start();
+				// videoView.start();
 				videoView.requestFocus();
 			}
 		});

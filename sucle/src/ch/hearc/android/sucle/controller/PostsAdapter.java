@@ -66,7 +66,6 @@ public class PostsAdapter extends ArrayAdapter<Post>
 			viewHolder.attachmentImageView.setVisibility(View.GONE);
 		}
 
-		viewHolder.userImageViewFB.setProfileId(post.getUser().getSocialId());
 		switch (post.getUser().getSocialType())
 		{
 			case Facebook:
@@ -151,11 +150,13 @@ public class PostsAdapter extends ArrayAdapter<Post>
 			viewHolder.attachmentImageView = (ImageView) workingView.findViewById(R.id.attachmentImageView);
 
 			workingView.setTag(viewHolder);
-
 		}
 		else
 		{
 			viewHolder = (ViewHolder) tag;
+			viewHolder.userImageViewFB.setBackgroundResource(android.R.color.transparent);
+			viewHolder.userImageViewGP.setImageResource(android.R.color.transparent);
+			viewHolder.userImageViewGP.setBackgroundResource(android.R.color.transparent);
 		}
 
 		return viewHolder;

@@ -10,8 +10,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import android.content.res.Resources;
-
 public final class WebServicesInfo {
 
 	public static final String BASE_URL = "https://sucle-diego999.rhcloud.com";

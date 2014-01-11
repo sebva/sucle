@@ -10,7 +10,6 @@ import java.net.URL;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import ch.hearc.android.sucle.WebServicesInfo;
 
 public class Attachment implements Serializable
 {
