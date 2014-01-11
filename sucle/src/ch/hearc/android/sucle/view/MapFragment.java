@@ -47,7 +47,7 @@ public class MapFragment extends Fragment
 		GoogleMap map = ((com.google.android.gms.maps.MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 		Location location = PostsManager.getInstance().getLocation();
 		if(location != null)
-			map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 16));
+			map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
 		Post[] posts = PostsManager.getInstance().getPosts();
 		for (int i = 0; i < posts.length; ++i)
 		{

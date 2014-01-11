@@ -25,13 +25,13 @@ public class PostsManager
 	private static final String		TAG				= "PostsManager";
 	private Set<Post>				posts;
 	private Post[]					comments;
-	private double					radius;
+	private int						radius;
 	private Location				location;
 	private int						nbMessage;
 	private FetchMessagesListener	listenerMessage;
 	private FetchCommentsListener	listenerComment;
 
-	private static final double		BASE_RADIUS		= 1000;
+	private static final int		BASE_RADIUS		= 1000;
 	private static final int		NUMBER_MESSAGES	= 100;
 	private static final String		FILE			= "posts";
 
@@ -43,7 +43,7 @@ public class PostsManager
 		return instance;
 	}
 
-	private PostsManager(double radius, int nbMessages, FetchMessagesListener listenerM, FetchCommentsListener listenerC)
+	private PostsManager(int radius, int nbMessages, FetchMessagesListener listenerM, FetchCommentsListener listenerC)
 	{
 		this.radius = radius;
 		this.location = null;
@@ -138,7 +138,7 @@ public class PostsManager
 		return location;
 	}
 
-	public double getRadius()
+	public int getRadius()
 	{
 		return radius;
 	}
@@ -148,7 +148,7 @@ public class PostsManager
 		return nbMessage;
 	}
 
-	public void setRadius(double radius)
+	public void setRadius(int radius)
 	{
 		this.radius = radius;
 	}
@@ -194,6 +194,6 @@ public class PostsManager
 
 	public void addNewPosts(Post[] result)
 	{
-		posts.addAll(Arrays.asList(result));		
+		if (result != null) posts.addAll(Arrays.asList(result));
 	}
 }

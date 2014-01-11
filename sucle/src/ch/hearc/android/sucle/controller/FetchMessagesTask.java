@@ -66,7 +66,7 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 		}
 		
 		Location location = (Location)params[0];
-		double radius = (Double)params[1];
+		int radius = (Integer)params[1];
 		int nbMessage = (Integer)params[2];
 		
 		HttpClient httpclient = new DefaultHttpClient();
