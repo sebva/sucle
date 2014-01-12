@@ -84,6 +84,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);
 		setContentView(R.layout.main_activity);
+		
 		FragmentManager fm = getFragmentManager();
 		fragments[SOCIAL_CONNECTION_FRAGMENT] = fm.findFragmentById(R.id.socialConnectionFragment);
 		fragments[MAIN_FRAGMENT] = fm.findFragmentById(R.id.mainFragment);
@@ -135,7 +136,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 			case R.id.action_map:
 				MainFragment mainFragment = (MainFragment) fragments[MAIN_FRAGMENT];
 				if (mainFragment.isMapDisplayed())
-					mainFragment.changeToList();
+					mainFragment.changeToTimeline();
 				else
 					mainFragment.changeToMap();
 				return true;
@@ -149,6 +150,8 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 				intent.putExtra("location", currentLocation);
 				intent.putExtra("deviceId", mDeviceId);
 				intent.putExtra("token", mToken);
+				Log.e(TAG, mDeviceId);
+				Log.e(TAG, mToken);
 				//intent.putExtra("parent", parent);
 				startActivity(intent);
 				return true;

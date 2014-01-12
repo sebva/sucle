@@ -39,14 +39,23 @@
         <item>There was a problem during the file creation</item>
     </string-array>
 
-    <string-array name="radius_values">
+    <string-array name="radius_tilte">
+        <item>50 meters</item>
+        <item>100 meters</item>
+        <item>250 meters</item>
+        <item>1000 meters</item>
+        <item>10000 meters</item>
+        <item>100000 meters</item>
+    </string-array>
+
+    <integer-array name="radius_values">
         <item>50</item>
         <item>100</item>
         <item>250</item>
         <item>1000</item>
         <item>10000</item>
         <item>100000</item>
-    </string-array>
+    </integer-array>
 
     <string name="error_internet_request">Cannot connect to the server</string>
     <string name="sending_message">Sending message in progress</string>

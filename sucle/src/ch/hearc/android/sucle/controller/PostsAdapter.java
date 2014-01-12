@@ -1,6 +1,7 @@
 package ch.hearc.android.sucle.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,9 +22,9 @@ public class PostsAdapter extends ArrayAdapter<Post>
 
 	private final int	postsItemLayoutResource;
 
-	public PostsAdapter(final Context context, final int postsItemLayoutResource)
+	public PostsAdapter(final Context context, final int postsItemLayoutResource, List<Post> posts)
 	{
-		super(context, 0);
+		super(context, 0, posts);
 		this.postsItemLayoutResource = postsItemLayoutResource;
 	}
 

@@ -25,10 +25,11 @@ import android.widget.TextView;
 import android.widget.VideoView;
 import ch.hearc.android.sucle.DownloadImageTask;
 import ch.hearc.android.sucle.R;
+import ch.hearc.android.sucle.controller.FetchCommentsTask.FetchCommentsListener;
 import ch.hearc.android.sucle.controller.PostsManager;
 import ch.hearc.android.sucle.model.Post;
 
-public class PostDetailsFragment extends Fragment
+public class PostDetailsFragment extends Fragment implements FetchCommentsListener
 {
 	public final static String	ARG_POSITION	= "position";
 	private int					currentPosition	= -1;
@@ -48,6 +49,8 @@ public class PostDetailsFragment extends Fragment
 		{
 			currentPosition = savedInstanceState.getInt(ARG_POSITION);
 		}
+
+		PostsManager.getInstance().setListenerComment(this);
 
 		// Inflate the layout for this fragment
 		view = inflater.inflate(R.layout.post_details_fragment, container, false);
@@ -83,7 +86,10 @@ public class PostDetailsFragment extends Fragment
 	{
 		if (position == currentPosition) return;
 		currentPosition = position;
-		Post post = PostsManager.getInstance().getPosts()[position];
+		Post post = PostsManager.getInstance().getPosts().get(position);
+
+		PostsManager.getInstance().getComments(post.getId());
+
 		TextView postContent = (TextView) view.findViewById(R.id.postContentDetails);
 		TextView profileName = (TextView) view.findViewById(R.id.profileName);
 
@@ -112,9 +118,17 @@ public class PostDetailsFragment extends Fragment
 
 		if (imageView != null) imageView.setVisibility(View.GONE);
 		if (videoView != null) videoView.setVisibility(View.GONE);
-		if (mediaPlayer != null && mediaPlayer.isPlaying())
+		try
 		{
-			stopSound();
+
+			if (mediaPlayer != null && mediaPlayer.isPlaying())
+			{
+				stopSound();
+			}
+		}
+		catch (Exception e)
+		{
+			// nothing to do
 		}
 
 		if (post.getAttachment() != null)
@@ -253,4 +267,17 @@ public class PostDetailsFragment extends Fragment
 	}
 
 	private static final String	TAG	= PostDetailsFragment.class.getSimpleName();
+
+	@Override
+	public void onCommentsFetched()
+	{
+		Post[] comments = PostsManager.getInstance().getComments();
+		for (int i = 0; i < comments.length; ++i)
+		{
+			ViewGroup layout = (ViewGroup) view;
+			TextView textView = new TextView(getActivity());
+			textView.setText(comments[i].getMessage());
+			layout.addView(textView);
+		}
+	}
 }

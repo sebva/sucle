@@ -7,9 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import android.content.Context;
 import android.location.Location;
@@ -23,7 +25,7 @@ public class PostsManager
 {
 
 	private static final String		TAG				= "PostsManager";
-	private Set<Post>				posts;
+	private List<Post>				posts;
 	private Post[]					comments;
 	private int						radius;
 	private Location				location;
@@ -31,7 +33,7 @@ public class PostsManager
 	private FetchMessagesListener	listenerMessage;
 	private FetchCommentsListener	listenerComment;
 
-	private static final int		BASE_RADIUS		= 1000;
+	private static final int		BASE_RADIUS		= 100000;
 	private static final int		NUMBER_MESSAGES	= 100;
 	private static final String		FILE			= "posts";
 
@@ -50,7 +52,7 @@ public class PostsManager
 		this.nbMessage = nbMessages;
 		this.listenerMessage = listenerM;
 		this.listenerComment = listenerC;
-		posts = new HashSet<Post>();
+		posts = new ArrayList<Post>();
 		comments = null;
 	}
 
@@ -62,7 +64,7 @@ public class PostsManager
 			BufferedInputStream bis = new BufferedInputStream(fis);
 			ObjectInputStream ois = new ObjectInputStream(bis);
 
-			posts = new HashSet<Post>();
+			posts = new ArrayList<Post>();
 			posts.addAll(Arrays.asList((Post[]) ois.readObject()));
 
 			ois.close();
@@ -151,6 +153,14 @@ public class PostsManager
 	public void setRadius(int radius)
 	{
 		this.radius = radius;
+		try
+		{
+			getNearbyPosts();
+		}
+		catch (NullPointerException e)
+		{
+			// nothing todo
+		}
 	}
 
 	public void setNbMessage(int nbMessage)
@@ -181,10 +191,9 @@ public class PostsManager
 		this.comments = comments;
 	}
 
-	public Post[] getPosts()
+	public List<Post> getPosts()
 	{
-		Post[] posts = new Post[this.posts.size()];
-		return this.posts.toArray(posts);
+		return posts;
 	}
 
 	public Post[] getComments()
@@ -194,6 +203,31 @@ public class PostsManager
 
 	public void addNewPosts(Post[] result)
 	{
-		if (result != null) posts.addAll(Arrays.asList(result));
+		if (result != null)
+		{
+			int postsQuantity = posts.size();
+			for (int i = 0; i < result.length; ++i)
+				if (!posts.contains(result[i])) posts.add(result[i]);
+			if (postsQuantity != posts.size())
+			{
+				Collections.sort(posts, new Comparator<Post>() {
+
+					@Override
+					public int compare(Post post1, Post post2)
+					{
+						float[] results = new float[3];
+						double latitude = PostsManager.getInstance().getLocation().getLatitude();
+						double longitude = PostsManager.getInstance().getLocation().getLongitude();
+						Location.distanceBetween(post1.getPosition().latitude, post1.getPosition().longitude, latitude, longitude, results);
+						float distancePost1 = results[0];
+						Location.distanceBetween(post2.getPosition().latitude, post2.getPosition().longitude, latitude, longitude, results);
+						float distancePost2 = results[0];
+						return Float.compare(distancePost1, distancePost2);
+					}
+
+				});
+				listenerMessage.onPostsFetched();
+			}
+		}
 	}
 }

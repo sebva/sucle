@@ -1,14 +1,20 @@
 package ch.hearc.android.sucle.view;
 
+import android.app.ActionBar;
+import android.app.ActionBar.OnNavigationListener;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.SpinnerAdapter;
 import ch.hearc.android.sucle.R;
+import ch.hearc.android.sucle.controller.FetchMessagesTask.FetchMessagesListener;
+import ch.hearc.android.sucle.controller.PostsManager;
 
-public class MainFragment extends Fragment implements TimelineFragment.OnPostSelectedListener
+public class MainFragment extends Fragment implements TimelineFragment.OnPostSelectedListener, FetchMessagesListener
 {
 	private boolean	mapDisplayed;
 
@@ -20,16 +26,8 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 
 		hide(R.id.mapFragment);
 
-		/*
-		 * if (view.findViewById(R.id.fragment_container) != null) {
-		 * TimelineFragment timelineFragment = new TimelineFragment();
-		 * 
-		 * timelineFragment.setCallback(this);
-		 * 
-		 * // Add the fragment to the 'fragment_container' FrameLayout
-		 * getFragmentManager().beginTransaction().add(R.id.fragment_container,
-		 * timelineFragment).commit(); } else
-		 */
+		PostsManager.getInstance().setListenerMessage(this);
+
 		if (getFragmentManager().findFragmentById(R.id.timelineFragment) != null)
 		{
 			((TimelineFragment) getFragmentManager().findFragmentById(R.id.timelineFragment)).setCallback(this);
@@ -38,7 +36,37 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 		{
 			((MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment)).setCallback(this);
 		}
+
+		setActionBarListNavigation();
+
 		return view;
+	}
+
+	@Override
+	public void onPostsFetched()
+	{
+		((MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment)).onPostsFetched();
+		((TimelineFragment) getFragmentManager().findFragmentById(R.id.timelineFragment)).onPostsFetched();
+	}
+
+	private void setActionBarListNavigation()
+	{
+		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.radius_tilte, android.R.layout.simple_spinner_dropdown_item);
+		getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, new OnNavigationListener() {
+			int[]	radius	= getResources().getIntArray(R.array.radius_values);
+
+			@Override
+			public boolean onNavigationItemSelected(int itemPosition, long itemId)
+			{
+				PostsManager.getInstance().setRadius(radius[itemPosition]);
+				((MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment)).radiusUpdated();
+				return false;
+			}
+		});
+		getActivity().getActionBar().setSelectedNavigationItem(2); // Default
+																	// value
+																	// (250meters)
 	}
 
 	public void changeToMap()
@@ -47,10 +75,10 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 		mapDisplayed = true;
 		hide(R.id.timelineFragment);
 		show(R.id.mapFragment);
-		((MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment)).updatePosts();
+		((MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment)).showMap();
 	}
 
-	public void changeToList()
+	public void changeToTimeline()
 	{
 		if (!mapDisplayed) return;
 		mapDisplayed = false;
@@ -90,7 +118,7 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 		{
 			postDetailsFragment.updatePostView(position);
 		}
-		else if(!tabletOnly)
+		else if (!tabletOnly)
 		{
 			PostDetailsFragment newFragment = new PostDetailsFragment();
 			Bundle args = new Bundle();

@@ -36,7 +36,7 @@ public class PostInfoWindowAdapter implements InfoWindowAdapter
 	@Override
 	public View getInfoWindow(Marker marker)
 	{
-		Post post = PostsManager.getInstance().getPosts()[Integer.parseInt(marker.getTitle())];
+		Post post = PostsManager.getInstance().getPosts().get(Integer.parseInt(marker.getTitle()));
 		view.setBackgroundColor(Sucle.getAppContext().getResources().getColor(R.color.white));
 
 		ProfilePictureView userImageViewFB = (ProfilePictureView) view.findViewById(R.id.profilePictureViewFB);

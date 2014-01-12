@@ -2,5 +2,7 @@
 <resources>
 
     <color name="white">#FFFFFF</color>
+    <color name="circle_fill_color">#882ECC71</color>
+    <color name="circle_stroke_color">#FF217530</color>
 
 </resources>
