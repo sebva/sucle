@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.location.Location;
@@ -42,9 +43,8 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.plus.PlusClient;
 
-public class MainActivity extends Activity implements PlusClient.OnAccessRevokedListener, OnClickListener,
-		LoginTask.LoginListener, GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener
+public class MainActivity extends Activity implements PlusClient.OnAccessRevokedListener, OnClickListener, LoginTask.LoginListener, GooglePlayServicesClient.ConnectionCallbacks,
+		GooglePlayServicesClient.OnConnectionFailedListener, LocationListener
 {
 	private boolean					isResumed					= false;
 	private boolean					onConnectionView			= true;
@@ -68,11 +68,12 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 	private PlusClient				mPlusClient;
 	private ConnectionResult		mConnectionResult;
 	private boolean					askedForGoogle				= false;
-	private LocationRequest mLocationRequest;
-	private LocationClient mLocationClient;
-	private Location currentLocation = null;
-	private String mToken = null;
-	private String mDeviceId = null;
+	private LocationRequest			mLocationRequest;
+	private LocationClient			mLocationClient;
+	private Location				currentLocation				= null;
+	public static String			mToken						= null;
+	public static String			mDeviceId					= null;
+	private ProgressDialog			loginDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -84,7 +85,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);
 		setContentView(R.layout.main_activity);
-		
+
 		FragmentManager fm = getFragmentManager();
 		fragments[SOCIAL_CONNECTION_FRAGMENT] = fm.findFragmentById(R.id.socialConnectionFragment);
 		fragments[MAIN_FRAGMENT] = fm.findFragmentById(R.id.mainFragment);
@@ -94,26 +95,25 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 			transaction.hide(fragments[i]);
 		}
 		transaction.commit();
-		
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(60000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setFastestInterval(10000);
 
-        ConnectionCallbacks connectionCallbacks = new GooglePlayServicesClient.ConnectionCallbacks()
-		{	
+		mLocationRequest = LocationRequest.create();
+		mLocationRequest.setInterval(60000);
+		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		mLocationRequest.setFastestInterval(10000);
+
+		ConnectionCallbacks connectionCallbacks = new GooglePlayServicesClient.ConnectionCallbacks() {
 			@Override
 			public void onDisconnected()
 			{
 			}
-			
+
 			@Override
 			public void onConnected(Bundle connectionHint)
 			{
 				mLocationClient.requestLocationUpdates(mLocationRequest, MainActivity.this);
 			}
 		};
-        mLocationClient = new LocationClient(this, connectionCallbacks, this);
+		mLocationClient = new LocationClient(this, connectionCallbacks, this);
 	}
 
 	@Override
@@ -141,7 +141,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 					mainFragment.changeToMap();
 				return true;
 			case R.id.action_new_message:
-				if(currentLocation == null)
+				if (currentLocation == null)
 				{
 					Toast.makeText(this, R.string.not_yet_located, Toast.LENGTH_SHORT).show();
 					return true;
@@ -150,9 +150,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 				intent.putExtra("location", currentLocation);
 				intent.putExtra("deviceId", mDeviceId);
 				intent.putExtra("token", mToken);
-				Log.e(TAG, mDeviceId);
-				Log.e(TAG, mToken);
-				//intent.putExtra("parent", parent);
+				// intent.putExtra("parent", parent);
 				startActivity(intent);
 				return true;
 			default:
@@ -196,6 +194,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 	{
 		onConnectionView = fragmentIndex == SOCIAL_CONNECTION_FRAGMENT;
 		invalidateOptionsMenu();
+
 		FragmentManager fm = getFragmentManager();
 		FragmentTransaction transaction = fm.beginTransaction();
 		for (int i = 0; i < fragments.length; i++)
@@ -286,10 +285,12 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 	public void onLogin()
 	{
 		showFragment(MAIN_FRAGMENT, false);
+		dismissOnLoginDialog();
 	}
 
 	private void onSessionStateChange(final Session session, SessionState state, Exception exception)
 	{
+		showOnLoginDialog();
 		// Only make changes if the activity is visible
 		if (isResumed)
 		{
@@ -423,5 +424,16 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 		currentLocation = location;
 		Log.e(TAG, "New location " + location.toString());
 		PostsManager.getInstance().onLocationChanged(location);
+	}
+
+	private void showOnLoginDialog()
+	{
+		loginDialog = ProgressDialog.show(this, "Connection...", "Connection in progress");
+	}
+
+	private void dismissOnLoginDialog()
+	{
+		if (loginDialog != null) loginDialog.dismiss();
+		loginDialog = null;
 	}
 }

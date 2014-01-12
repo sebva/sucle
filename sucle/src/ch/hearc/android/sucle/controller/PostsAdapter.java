@@ -87,7 +87,7 @@ public class PostsAdapter extends ArrayAdapter<Post>
 		return view;
 	}
 
-	private static String ago(long ago)
+	public static String ago(long ago)
 	{
 		String agoString;
 		if (ago < 1000)

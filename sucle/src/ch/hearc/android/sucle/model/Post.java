@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class Post implements Serializable
 {
 	private int			id;
+	private int			parent;
 	private User		user;
 	private LatLng		position;
 	private String		positionName;
@@ -22,9 +23,10 @@ public class Post implements Serializable
 	private Attachment	attachment;
 	private String		message;
 
-	public Post(int id, User user, LatLng position, Date time, Attachment attachment, String message)
+	public Post(int id, int parent, User user, LatLng position, Date time, Attachment attachment, String message)
 	{
 		this.id = id;
+		this.parent = parent;
 		this.user = user;
 		this.position = position;
 		this.time = time;
@@ -92,6 +94,11 @@ public class Post implements Serializable
 	public int getId()
 	{
 		return id;
+	}
+
+	public int getParent()
+	{
+		return parent;
 	}
 	
 	@Override

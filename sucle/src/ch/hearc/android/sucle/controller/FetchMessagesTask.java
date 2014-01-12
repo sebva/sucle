@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import android.location.Location;
 import android.os.AsyncTask;
+import android.util.Log;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Sucle;
 import ch.hearc.android.sucle.WebServicesInfo;
@@ -123,7 +124,7 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 
 					if (attachmentType != AttachmentType.Undefined) attachment = new Attachment(null, attachmentType, filePath);
 
-					posts.add(new Post(Integer.valueOf(id), user, new LatLng(Double.valueOf(object.getString(WebServicesInfo.JSONKey.MESSAGE_LAT)), Double.valueOf(object
+					posts.add(new Post(Integer.valueOf(id), -1, user, new LatLng(Double.valueOf(object.getString(WebServicesInfo.JSONKey.MESSAGE_LAT)), Double.valueOf(object
 							.getString(WebServicesInfo.JSONKey.MESSAGE_LONG))), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(object
 							.getString(WebServicesInfo.JSONKey.MESSAGE_DATETIME)), attachment, object.getString(WebServicesInfo.JSONKey.MESSAGE_MESSAGE)));
 				}
@@ -138,7 +139,7 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			Log.e(FetchMessagesTask.class.getSimpleName(), e.getMessage());
 		}
 
 		return null;

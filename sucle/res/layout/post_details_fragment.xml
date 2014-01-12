@@ -48,4 +48,19 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
     </ScrollView>
 
+
+    <LinearLayout
+        android:id="@+id/commentsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/addComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_comment" />
+
 </LinearLayout>

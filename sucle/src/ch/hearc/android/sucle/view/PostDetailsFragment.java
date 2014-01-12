@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -17,10 +18,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 import ch.hearc.android.sucle.DownloadImageTask;
@@ -37,6 +41,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 	private ImageView			imageView;
 	private VideoView			videoView;
 	private MediaPlayer			mediaPlayer;
+	private Post				post;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -54,6 +59,22 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 
 		// Inflate the layout for this fragment
 		view = inflater.inflate(R.layout.post_details_fragment, container, false);
+
+		Button addCommentButton = (Button) view.findViewById(R.id.addComment);
+		addCommentButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0)
+			{
+				Intent intent = new Intent(getActivity(), NewMessageActivity.class);
+				intent.putExtra("location", PostsManager.getInstance().getLocation());
+				intent.putExtra("deviceId", MainActivity.mDeviceId);
+				intent.putExtra("token", MainActivity.mToken);
+				intent.putExtra("parent", post.getParent());
+				startActivity(intent);
+			}
+		});
+
 		return view;
 	}
 
@@ -82,11 +103,21 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 		}
 	}
 
+	@Override
+	public void onStop()
+	{
+		super.onStop();
+		stopSound();
+	}
+
 	public void updatePostView(int position)
 	{
 		if (position == currentPosition) return;
 		currentPosition = position;
-		Post post = PostsManager.getInstance().getPosts().get(position);
+
+		((LinearLayout) (view.findViewById(R.id.commentsFragment))).removeAllViews();
+
+		post = PostsManager.getInstance().getPosts().get(position);
 
 		PostsManager.getInstance().getComments(post.getId());
 
@@ -118,18 +149,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 
 		if (imageView != null) imageView.setVisibility(View.GONE);
 		if (videoView != null) videoView.setVisibility(View.GONE);
-		try
-		{
-
-			if (mediaPlayer != null && mediaPlayer.isPlaying())
-			{
-				stopSound();
-			}
-		}
-		catch (Exception e)
-		{
-			// nothing to do
-		}
+		stopSound();
 
 		if (post.getAttachment() != null)
 		{
@@ -194,8 +214,18 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 
 	private void stopSound()
 	{
-		mediaPlayer.stop();
-		mediaPlayer.release();
+		try
+		{
+			if (mediaPlayer != null && mediaPlayer.isPlaying())
+			{
+				mediaPlayer.stop();
+				mediaPlayer.release();
+			}
+		}
+		catch (Exception e)
+		{
+			// nothing to do
+		}
 	}
 
 	private void playVideoForPath(final String path)
@@ -274,10 +304,10 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 		Post[] comments = PostsManager.getInstance().getComments();
 		for (int i = 0; i < comments.length; ++i)
 		{
-			ViewGroup layout = (ViewGroup) view;
-			TextView textView = new TextView(getActivity());
-			textView.setText(comments[i].getMessage());
-			layout.addView(textView);
+			if (comments[i].getParent() != post.getId()) continue;
+			CommentFragment commentFragment = new CommentFragment();
+			commentFragment.setPost(comments[i]);
+			getFragmentManager().beginTransaction().add(R.id.commentsFragment, commentFragment, "comment" + comments[i].getId()).commit();
 		}
 	}
 }

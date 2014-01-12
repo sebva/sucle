@@ -12,14 +12,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import android.os.AsyncTask;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Sucle;
 import ch.hearc.android.sucle.WebServicesInfo;
-import ch.hearc.android.sucle.R.string;
-import ch.hearc.android.sucle.WebServicesInfo.JSONKey;
-
-import android.os.AsyncTask;
-import android.util.Log;
 
 public class LoginTask extends AsyncTask<String, Void, Void>
 {
