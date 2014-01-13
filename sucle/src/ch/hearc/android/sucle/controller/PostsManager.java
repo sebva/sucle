@@ -208,6 +208,14 @@ public class PostsManager
 			int postsQuantity = posts.size();
 			for (int i = 0; i < result.length; ++i)
 				if (!posts.contains(result[i])) posts.add(result[i]);
+			for (int i = 0; i < posts.size(); ++i)
+			{
+				if (posts.get(i).distanceToPoint(getLocation().getLatitude(), getLocation().getLongitude()) > radius)
+				{
+					posts.remove(i);
+					i--;
+				}
+			}
 			if (postsQuantity != posts.size())
 			{
 				Collections.sort(posts, new Comparator<Post>() {
@@ -215,14 +223,9 @@ public class PostsManager
 					@Override
 					public int compare(Post post1, Post post2)
 					{
-						float[] results = new float[3];
-						double latitude = PostsManager.getInstance().getLocation().getLatitude();
-						double longitude = PostsManager.getInstance().getLocation().getLongitude();
-						Location.distanceBetween(post1.getPosition().latitude, post1.getPosition().longitude, latitude, longitude, results);
-						float distancePost1 = results[0];
-						Location.distanceBetween(post2.getPosition().latitude, post2.getPosition().longitude, latitude, longitude, results);
-						float distancePost2 = results[0];
-						return Float.compare(distancePost1, distancePost2);
+						double latitude = getLocation().getLatitude();
+						double longitude = getLocation().getLongitude();
+						return Float.compare(post1.distanceToPoint(latitude, longitude), post2.distanceToPoint(latitude, longitude));
 					}
 
 				});

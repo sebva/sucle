@@ -26,8 +26,6 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 
 		hide(R.id.mapFragment);
 
-		PostsManager.getInstance().setListenerMessage(this);
-
 		if (getFragmentManager().findFragmentById(R.id.timelineFragment) != null)
 		{
 			((TimelineFragment) getFragmentManager().findFragmentById(R.id.timelineFragment)).setCallback(this);
@@ -40,6 +38,26 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 		setActionBarListNavigation();
 
 		return view;
+	}
+
+	@Override
+	public void onStart()
+	{
+		super.onStart();
+		PostsManager.getInstance().setListenerMessage(this);
+	}
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		try
+		{
+			PostsManager.getInstance().getNearbyPosts();
+		}
+		catch (Exception e)
+		{
+		}
 	}
 
 	@Override

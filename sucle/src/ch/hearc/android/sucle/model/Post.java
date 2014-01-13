@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import ch.hearc.android.sucle.Sucle;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -117,6 +118,13 @@ public class Post implements Serializable
 	public boolean equals(Object o)
 	{
 		return id == ((Post)o).id;
+	}
+	
+	public float distanceToPoint(double latitude, double longitude)
+	{
+		float[] results = new float[3];
+		Location.distanceBetween(position.latitude, position.longitude, latitude, longitude, results);
+		return results[0];
 	}
 
 	private void fetchPositionName()
