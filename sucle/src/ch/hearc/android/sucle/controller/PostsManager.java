@@ -154,7 +154,7 @@ public class PostsManager
 	{
 		boolean smallerRadius = this.radius > radius;
 		this.radius = radius;
-		if(smallerRadius)
+		if (smallerRadius)
 		{
 			for (int i = 0; i < posts.size(); ++i)
 			{
@@ -168,14 +168,15 @@ public class PostsManager
 		}
 		else
 		{
-		try
-		{
-			getNearbyPosts();
+			try
+			{
+				getNearbyPosts();
+			}
+			catch (NullPointerException e)
+			{
+				// nothing todo
+			}
 		}
-		catch (NullPointerException e)
-		{
-			// nothing todo
-		}}
 	}
 
 	public void setNbMessage(int nbMessage)
@@ -211,8 +212,9 @@ public class PostsManager
 		return posts;
 	}
 
-	public Post[] getComments()
+	public Post[] getComments() throws NullPointerException
 	{
+		if (listenerComment == null) throw new NullPointerException("No listenerComment set");
 		return comments;
 	}
 

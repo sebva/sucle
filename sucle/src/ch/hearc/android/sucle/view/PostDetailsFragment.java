@@ -99,6 +99,12 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 	{
 		super.onStop();
 		stopSound();
+	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
 		PostsManager.getInstance().setListenerComment(null);
 	}
 
@@ -221,7 +227,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 	private void cleanView()
 	{
 		post = null;
-		
+
 		((LinearLayout) (view.findViewById(R.id.commentsFragment))).removeAllViews();
 
 		TextView postContent = (TextView) view.findViewById(R.id.postContentDetails);
@@ -331,13 +337,21 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 	@Override
 	public void onCommentsFetched()
 	{
-		Post[] comments = PostsManager.getInstance().getComments();
-		for (int i = 0; i < comments.length; ++i)
+		((LinearLayout) (view.findViewById(R.id.commentsFragment))).removeAllViews();
+		try
 		{
-			if (comments[i].getParent() != post.getId()) continue;
-			CommentFragment commentFragment = new CommentFragment();
-			commentFragment.setPost(comments[i]);
-			getFragmentManager().beginTransaction().add(R.id.commentsFragment, commentFragment, "comment" + comments[i].getId()).commit();
+			Post[] comments = PostsManager.getInstance().getComments();
+			for (int i = 0; i < comments.length; ++i)
+			{
+				if (comments[i].getParent() != post.getId()) continue;
+				CommentFragment commentFragment = new CommentFragment();
+				commentFragment.setPost(comments[i]);
+				getFragmentManager().beginTransaction().add(R.id.commentsFragment, commentFragment, "comment" + comments[i].getId()).commit();
+			}
+		}
+		catch (NullPointerException e)
+		{
+
 		}
 	}
 }
