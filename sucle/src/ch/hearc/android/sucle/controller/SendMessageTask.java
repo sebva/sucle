@@ -16,11 +16,10 @@ import ch.hearc.android.sucle.Sucle;
 import ch.hearc.android.sucle.WebServicesInfo;
 import ch.hearc.android.sucle.R.string;
 import ch.hearc.android.sucle.WebServicesInfo.JSONKey;
-
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class SendMessageTask extends AsyncTask<String, Void, Void>
+public class SendMessageTask extends AsyncTask<Object, Void, Void>
 {
 	private String error = null;
 	
@@ -33,7 +32,7 @@ public class SendMessageTask extends AsyncTask<String, Void, Void>
 	} 
 	
 	@Override
-	protected Void doInBackground(String... params) {
+	protected Void doInBackground(Object... params) {
 		if(params.length != 5 && params.length != 6)
 		{
 			error = "Parameters length doesn't correspond ...";
@@ -41,12 +40,13 @@ public class SendMessageTask extends AsyncTask<String, Void, Void>
 		}
 		MessageNotification.basicNotification(Sucle.getAppContext(), Sucle.getAppContext().getResources().getString(R.string.sending_message), true);
 		
-		String token = params[0];
-		String device_id = params[1];
-		String message = params[2];
-		String lat = params[3];
-		String lon = params[4];
-		String filepath = params.length == 6 ? params[5] : null;
+		String token = (String) params[0];
+		String device_id = (String) params[1];
+		String message = (String) params[2];
+		String lat = (String) params[3];
+		String lon = (String) params[4];
+		String parent = (String) params[5];
+		String filepath = (String) (params.length == 7 ? params[6] : null);
 		
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost request = new HttpPost(WebServicesInfo.URL_SEND_MESSAGE);
@@ -62,7 +62,8 @@ public class SendMessageTask extends AsyncTask<String, Void, Void>
 		builder.addTextBody("message", message);
 		builder.addTextBody("lat", lat);
 		builder.addTextBody("lon", lon);
-		
+		if(!"-1".equals(parent))
+			builder.addTextBody("parent", parent);
 		try
 		{  
 			request.setEntity(builder.build());
