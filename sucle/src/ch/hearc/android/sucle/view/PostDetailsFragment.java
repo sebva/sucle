@@ -129,6 +129,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 
 		post = PostsManager.getInstance().getPosts().get(position);
 
+		PostsManager.getInstance().setListenerComment(this);
 		PostsManager.getInstance().getComments(post.getId());
 
 		TextView postContent = (TextView) view.findViewById(R.id.postContentDetails);
