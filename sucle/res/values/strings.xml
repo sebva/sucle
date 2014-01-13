@@ -40,12 +40,12 @@
     </string-array>
 
     <string-array name="radius_tilte">
-        <item>50 meters</item>
-        <item>100 meters</item>
-        <item>250 meters</item>
-        <item>1000 meters</item>
-        <item>10000 meters</item>
-        <item>100000 meters</item>
+        <item>50m</item>
+        <item>100m</item>
+        <item>250m</item>
+        <item>1km</item>
+        <item>10km</item>
+        <item>100km</item>
     </string-array>
 
     <integer-array name="radius_values">

@@ -54,9 +54,6 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 		{
 			currentPosition = savedInstanceState.getInt(ARG_POSITION);
 		}
-
-		PostsManager.getInstance().setListenerComment(this);
-
 		// Inflate the layout for this fragment
 		view = inflater.inflate(R.layout.post_details_fragment, container, false);
 
@@ -70,7 +67,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 				intent.putExtra("location", PostsManager.getInstance().getLocation());
 				intent.putExtra("deviceId", MainActivity.mDeviceId);
 				intent.putExtra("token", MainActivity.mToken);
-				intent.putExtra("parent", post.getParent());
+				intent.putExtra("parent", post.getId());
 				startActivity(intent);
 			}
 		});
@@ -83,22 +80,15 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 	{
 		super.onStart();
 
-		// During startup, check if there are arguments passed to the fragment.
-		// onStart is a good place to do this because the layout has already
-		// been
-		// applied to the fragment at this point so we can safely call the
-		// method
-		// below that sets the article text.
+		PostsManager.getInstance().setListenerComment(this);
+
 		Bundle args = getArguments();
 		if (args != null)
 		{
-			// Set article based on argument passed in
 			updatePostView(args.getInt(ARG_POSITION));
 		}
 		else if (currentPosition != -1)
 		{
-			// Set article based on saved instance state defined during
-			// onCreateView
 			updatePostView(currentPosition);
 		}
 	}
@@ -108,6 +98,14 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 	{
 		super.onStop();
 		stopSound();
+		PostsManager.getInstance().setListenerComment(null);
+	}
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		if (post != null) PostsManager.getInstance().getComments(post.getId());
 	}
 
 	public void updatePostView(int position)

@@ -124,7 +124,7 @@ public class NewMessageActivity extends Activity
 				mMessage.getText().toString(),
 				Double.toString(mLocation.getLatitude()),
 				Double.toString(mLocation.getLongitude()),
-				mParentMessageId,
+				Integer.toString(mParentMessageId),
 				mFilePath);
 		finish();
 	}
