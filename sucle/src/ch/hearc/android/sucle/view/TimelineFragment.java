@@ -13,7 +13,7 @@ public class TimelineFragment extends ListFragment
 {
 	private OnPostSelectedListener	mCallback;
 	private PostsAdapter			postsAdapter;
-	private int						position	= -1;
+	private int						position	= PostDetailsFragment.NO_POST;
 
 	public interface OnPostSelectedListener
 	{
@@ -41,8 +41,15 @@ public class TimelineFragment extends ListFragment
 
 	public void onPostsFetched()
 	{
-		if(position == -1)
+		if (postsAdapter.getCount() == 0)
+		{
+			mCallback.onPostSelected(PostDetailsFragment.NO_POST, true);
+			position = PostDetailsFragment.NO_POST;
+		}
+		else if (position == PostDetailsFragment.NO_POST)
+		{
 			mCallback.onPostSelected(0, true);
+		}
 		postsAdapter.notifyDataSetChanged();
 	}
 
@@ -50,7 +57,7 @@ public class TimelineFragment extends ListFragment
 	public void onListItemClick(ListView l, View v, int position, long id)
 	{
 		this.position = position;
-		
+
 		// Notify the parent activity of selected item
 		mCallback.onPostSelected(position, false);
 

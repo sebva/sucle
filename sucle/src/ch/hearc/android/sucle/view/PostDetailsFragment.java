@@ -35,8 +35,9 @@ import ch.hearc.android.sucle.model.Post;
 
 public class PostDetailsFragment extends Fragment implements FetchCommentsListener
 {
+	public static final int		NO_POST			= -1;
 	public final static String	ARG_POSITION	= "position";
-	private int					currentPosition	= -1;
+	private int					currentPosition	= NO_POST;
 	private View				view;
 	private ImageView			imageView;
 	private VideoView			videoView;
@@ -87,7 +88,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 		{
 			updatePostView(args.getInt(ARG_POSITION));
 		}
-		else if (currentPosition != -1)
+		else if (currentPosition != NO_POST)
 		{
 			updatePostView(currentPosition);
 		}
@@ -110,6 +111,11 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 
 	public void updatePostView(int position)
 	{
+		if (position == NO_POST)
+		{
+			cleanView();
+			return;
+		}
 		if (position == currentPosition) return;
 		currentPosition = position;
 
@@ -121,6 +127,8 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 
 		TextView postContent = (TextView) view.findViewById(R.id.postContentDetails);
 		TextView profileName = (TextView) view.findViewById(R.id.profileName);
+
+		view.findViewById(R.id.addComment).setVisibility(View.VISIBLE);
 
 		ProfilePictureView userImageViewFB = (ProfilePictureView) view.findViewById(R.id.profilePictureViewFB);
 		RoundedImageView userImageViewGP = (RoundedImageView) view.findViewById(R.id.profilePictureViewGP);
@@ -208,6 +216,30 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 					break;
 			}
 		}
+	}
+
+	private void cleanView()
+	{
+		post = null;
+		
+		((LinearLayout) (view.findViewById(R.id.commentsFragment))).removeAllViews();
+
+		TextView postContent = (TextView) view.findViewById(R.id.postContentDetails);
+		TextView profileName = (TextView) view.findViewById(R.id.profileName);
+		profileName.setText("");
+		postContent.setText("");
+
+		view.findViewById(R.id.addComment).setVisibility(View.GONE);
+
+		ProfilePictureView userImageViewFB = (ProfilePictureView) view.findViewById(R.id.profilePictureViewFB);
+		RoundedImageView userImageViewGP = (RoundedImageView) view.findViewById(R.id.profilePictureViewGP);
+
+		userImageViewGP.setVisibility(View.GONE);
+		userImageViewFB.setVisibility(View.GONE);
+
+		if (imageView != null) imageView.setVisibility(View.GONE);
+		if (videoView != null) videoView.setVisibility(View.GONE);
+		stopSound();
 	}
 
 	private void stopSound()

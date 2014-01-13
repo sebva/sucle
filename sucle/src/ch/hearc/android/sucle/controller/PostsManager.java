@@ -152,7 +152,22 @@ public class PostsManager
 
 	public void setRadius(int radius)
 	{
+		boolean smallerRadius = this.radius > radius;
 		this.radius = radius;
+		if(smallerRadius)
+		{
+			for (int i = 0; i < posts.size(); ++i)
+			{
+				if (posts.get(i).distanceToPoint(getLocation().getLatitude(), getLocation().getLongitude()) > radius)
+				{
+					posts.remove(i);
+					i--;
+				}
+			}
+			listenerMessage.onPostsFetched();
+		}
+		else
+		{
 		try
 		{
 			getNearbyPosts();
@@ -160,7 +175,7 @@ public class PostsManager
 		catch (NullPointerException e)
 		{
 			// nothing todo
-		}
+		}}
 	}
 
 	public void setNbMessage(int nbMessage)
@@ -207,15 +222,7 @@ public class PostsManager
 		{
 			int postsQuantity = posts.size();
 			for (int i = 0; i < result.length; ++i)
-				if (!posts.contains(result[i])) posts.add(result[i]);
-			for (int i = 0; i < posts.size(); ++i)
-			{
-				if (posts.get(i).distanceToPoint(getLocation().getLatitude(), getLocation().getLongitude()) > radius)
-				{
-					posts.remove(i);
-					i--;
-				}
-			}
+				if (!posts.contains(result[i]) && result[i].distanceToPoint(getLocation().getLatitude(), getLocation().getLongitude()) < radius) posts.add(result[i]);
 			if (postsQuantity != posts.size())
 			{
 				Collections.sort(posts, new Comparator<Post>() {
