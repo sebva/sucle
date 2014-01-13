@@ -33,7 +33,7 @@ public class SendMessageTask extends AsyncTask<Object, Void, Void>
 	
 	@Override
 	protected Void doInBackground(Object... params) {
-		if(params.length != 5 && params.length != 6)
+		if(params.length != 6 && params.length != 7)
 		{
 			error = "Parameters length doesn't correspond ...";
 			return null;
