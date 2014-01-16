@@ -6,13 +6,15 @@ class User
     private $inscription;
     private $social_id;
     private $type;
-
+	private $name;
+	
     public function __construct($data)
     {
         $this->id = isset($data['id']) ? $data['id'] : null;
         $this->inscription = isset($data['inscription']) ? $data['inscription'] : null;
         $this->social_id = isset($data['social_id']) ? $data['social_id'] : null;
         $this->type = isset($data['type']) ? $data['type'] : null;
+		$this->name = isset($data['name']) ? $data['name'] : null;
     }
 
     public function getInfo()
@@ -20,7 +22,8 @@ class User
         return array('id' => $this->id,
             'inscription' => $this->inscription,
             'social_id' => $this->social_id,
-            'type' => $this->type);
+            'type' => $this->type,
+			'name' => $this->name);
     }
 
     /**
@@ -87,5 +90,13 @@ class User
         return $this->type;
     }
 
-
+	public function getName()
+	{
+		return $this->name;
+	}
+	
+	public function setName($name)
+	{
+		$this->name = $name;
+	}
 } 

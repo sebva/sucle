@@ -81,7 +81,7 @@ class DataBase
 
     public function getComments($parent)
     {
-        $q = $this->pdo->prepare('SELECT * FROM `message` WHERE `parent`=:parent ORDER BY `id` DESC');
+        $q = $this->pdo->prepare('SELECT * FROM `message` WHERE `parent`=:parent ORDER BY `id`');
         $q->bindParam(':parent', $parent, PDO::PARAM_INT);
         $q->execute();
 
@@ -150,7 +150,10 @@ class DataBase
         $user = $this->existsUser($social_id, $type, $user_exists);
 
         if(!$user_exists)
-            $user = new User(array('inscription' => date("Y-m-d H:i:s"), 'social_id' => $social_id, 'type' => $type));
+		{
+			$link = "https://www.googleapis.com/plus/v1/people/".$social_id."?fields=displayName&key=".$settings[Settings::KEY_GP];
+            $user = new User(array('inscription' => date("Y-m-d H:i:s"), 'social_id' => $social_id, 'type' => $type, 'name' => json_decode(file_get_contents($link))->displayName));
+		}
         $this->insertUpdateUser($user);
 
         if($user == null)
@@ -311,21 +314,23 @@ class DataBase
     {
         if($user->getId() == null)
         {
-            $q = $this->pdo->prepare('INSERT INTO `user` VALUES(NULL, :inscription, :social_id, :type)');
+            $q = $this->pdo->prepare('INSERT INTO `user` VALUES(NULL, :inscription, :social_id, :type, :name)');
             $q->bindParam(':inscription', $user->getInscription(), PDO::PARAM_STR);
             $q->bindParam(':social_id', $user->getSocialId(), PDO::PARAM_STR);
             $q->bindParam(':type', $user->getType(), PDO::PARAM_STR);
+			$q->bindParam(':name', $user->getName(), PDO::PARAM_STR);
             $q->execute();
 
             $user->setId($this->pdo->lastInsertId());
         }
         else
         {
-            $q = $this->pdo->prepare('UPDATE `user` SET `inscription`=:inscription, `social_id` = :social_id, `type` = :type WHERE `id`=:id');
+            $q = $this->pdo->prepare('UPDATE `user` SET `inscription`=:inscription, `social_id` = :social_id, `type` = :type, `name` = :name WHERE `id`=:id');
             $q->bindParam(':id', $user->getId(), PDO::PARAM_INT);
             $q->bindParam(':inscription', $user->getInscription(), PDO::PARAM_STR);
             $q->bindParam(':social_id', $user->getSocialId(), PDO::PARAM_STR);
             $q->bindParam(':type', $user->getType(), PDO::PARAM_STR);
+			$q->bindParam(':name', $user->getName(), PDO::PARAM_STR);
             $q->execute();
         }
     }

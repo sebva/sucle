@@ -13,7 +13,8 @@ class Settings
     const DEFAULT_NB_MESSAGE = 'default_nb_message';
     const TYPE_SOCIAL = 'type_social';
     const WEBSITE = 'website';
-
+	const KEY_GP = 'key_gp';
+	
     public static function getSettings()
     {
         return array(
@@ -29,7 +30,8 @@ class Settings
                                             'audio' => array('mp3','3gp','mp4','m4a','ogg','wav'),
                                             'image' => array('jpg','jpeg','gif','png')),
             self::DEFAULT_NB_MESSAGE => 20,
-            self::TYPE_SOCIAL => array('FB', 'GP')
+            self::TYPE_SOCIAL => array('FB', 'GP'),
+			self::KEY_GP => 'AIzaSyDWxuiSZF-3uZR-afHLI8hmRfS-VHS2_xI'
         );
     }
 }
