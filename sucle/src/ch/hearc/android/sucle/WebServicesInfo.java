@@ -61,6 +61,7 @@ public final class WebServicesInfo {
 		public static final String USER_ID = "id";
 		public static final String USER_INSCRIPTION = "inscription";
 		public static final String USER_SOCIAL_ID = "social_id";
+		public static final String USER_NAME = "name";
 		public static final String USER_TYPE = "type";
 		
 		public static final String USER_TYPE_FACEBOOK = "FB";

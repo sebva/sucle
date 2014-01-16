@@ -13,6 +13,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Sucle;
 import ch.hearc.android.sucle.WebServicesInfo;
@@ -86,6 +87,7 @@ public class LoginTask extends AsyncTask<String, Void, Void>
 		}
 		catch (Exception e) 
 		{
+			Log.e("LoginTast Error", e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
