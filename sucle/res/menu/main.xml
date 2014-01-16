@@ -6,6 +6,7 @@
         android:icon="@android:drawable/ic_dialog_map"
         android:showAsAction="always"
         android:title="@string/action_map"/><item android:id="@+id/action_new_message" android:icon="@drawable/ic_new_message" android:title="@string/new_message" android:showAsAction="ifRoom"></item>
+        <item android:id="@+id/action_logout" android:title="@string/logout" android:showAsAction="never|withText"></item>
     
 
 </menu>

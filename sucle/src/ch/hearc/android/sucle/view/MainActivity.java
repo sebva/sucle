@@ -154,6 +154,11 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 				// intent.putExtra("parent", parent);
 				startActivity(intent);
 				return true;
+			case R.id.action_logout:
+				if(mPlusClient.isConnected())
+					mPlusClient.revokeAccessAndDisconnect(this);
+				// TODO : Logout Facebook
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
