@@ -75,5 +75,9 @@
 	<string name="photo">Photo</string>
 	<string name="video">Video</string>
 	<string name="audio">Audio</string>
+	<string name="take_photo">Take a photo</string>
+	<string name="capture_video">Capture a movie</string>
 	<string name="add_comment">Add a comment</string>
+	<string name="message">Message</string>
+	<string name="sent_from">Sent from</string>
 </resources>
