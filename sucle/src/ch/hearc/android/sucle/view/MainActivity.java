@@ -306,8 +306,6 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 			{
 				// If the session state is open:
 				// Show the authenticated fragment
-
-				Log.d(FACEBOOK_LOG, "Access Token" + session.getAccessToken());
 				Request.newMeRequest(session, new Request.GraphUserCallback() {
 
 					@Override
@@ -315,14 +313,6 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 					{
 						if (user != null)
 						{
-							Log.d(FACEBOOK_LOG, "User ID " + user.getId());
-							Log.d(FACEBOOK_LOG, "User Name " + user.getFirstName() + " " + user.getLastName());
-							/*
-							 * Toast.makeText(MainActivity.this, "Welcome : " +
-							 * user.getFirstName() + " " + user.getLastName() +
-							 * "\nYour User ID IS : " + user.getId(),
-							 * Toast.LENGTH_SHORT) .show();
-							 */
 							loginToSucle(user.getId(), session.getAccessToken(), SocialType.Facebook);
 						}
 					}
@@ -428,7 +418,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 
 	private void showOnLoginDialog()
 	{
-		loginDialog = ProgressDialog.show(this, "Connection...", "Connection in progress");
+		if (loginDialog == null) loginDialog = ProgressDialog.show(this, "Connection...", "Connection in progress");
 	}
 
 	private void dismissOnLoginDialog()
