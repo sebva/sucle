@@ -356,7 +356,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 				videoView.setVideoPath(path);
 				videoView.requestFocus();
 				videoView.setVisibility(View.VISIBLE);
-				showIsLoading(true);
+				showIsLoading(false);
 			}
 		});
 	}

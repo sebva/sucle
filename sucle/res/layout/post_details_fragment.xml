@@ -45,6 +45,7 @@
             android:id="@+id/postContentDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:textAppearance="?android:attr/textAppearanceLarge" />
     </ScrollView>
 
@@ -74,6 +75,8 @@
         android:id="@+id/addComment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/green"
         android:text="@string/add_comment"
         android:visibility="gone" />
 
