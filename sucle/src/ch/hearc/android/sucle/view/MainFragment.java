@@ -17,11 +17,13 @@ import ch.hearc.android.sucle.controller.PostsManager;
 public class MainFragment extends Fragment implements TimelineFragment.OnPostSelectedListener, FetchMessagesListener
 {
 	private boolean	mapDisplayed;
+	private boolean	realStart;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		mapDisplayed = false;
+		realStart = false;
 		View view = inflater.inflate(R.layout.main_fragment, container, false);
 
 		hide(R.id.mapFragment);
@@ -51,6 +53,10 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 	public void onResume()
 	{
 		super.onResume();
+		if (realStart)
+			getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		else
+			realStart = true;
 		try
 		{
 			PostsManager.getInstance().getNearbyPosts();
@@ -58,6 +64,13 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 		catch (Exception e)
 		{
 		}
+	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 	}
 
 	@Override
@@ -70,7 +83,7 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 	private void setActionBarListNavigation()
 	{
 		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.radius_tilte, android.R.layout.simple_spinner_dropdown_item);
-		getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, new OnNavigationListener() {
 			int[]	radius	= getResources().getIntArray(R.array.radius_values);
 
@@ -82,9 +95,7 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 				return false;
 			}
 		});
-		getActivity().getActionBar().setSelectedNavigationItem(2); // Default
-																	// value
-																	// (250meters)
+		// getActivity().getActionBar().setSelectedNavigationItem(2);
 	}
 
 	public void changeToMap()

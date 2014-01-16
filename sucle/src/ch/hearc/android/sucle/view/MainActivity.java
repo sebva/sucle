@@ -1,5 +1,6 @@
 package ch.hearc.android.sucle.view;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -193,6 +194,11 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 	private void showFragment(int fragmentIndex, boolean addToBackStack)
 	{
 		onConnectionView = fragmentIndex == SOCIAL_CONNECTION_FRAGMENT;
+		if (onConnectionView)
+			getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		else
+			getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+
 		invalidateOptionsMenu();
 
 		FragmentManager fm = getFragmentManager();
@@ -405,8 +411,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 		uiHelper.onSaveInstanceState(outState);
 	}
 
-	private static final String	FACEBOOK_LOG	= "Log : Facebook";
-	private static final String	TAG				= "Log : " + MainActivity.class.getSimpleName();
+	private static final String	TAG	= "Log : " + MainActivity.class.getSimpleName();
 
 	@Override
 	public void onLocationChanged(Location location)

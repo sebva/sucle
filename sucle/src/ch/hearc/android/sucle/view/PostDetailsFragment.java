@@ -135,6 +135,8 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 
 		view.findViewById(R.id.addComment).setVisibility(View.VISIBLE);
 
+		view.findViewById(R.id.playPauseImageView).setVisibility(View.GONE);
+
 		ProfilePictureView userImageViewFB = (ProfilePictureView) view.findViewById(R.id.profilePictureViewFB);
 		RoundedImageView userImageViewGP = (RoundedImageView) view.findViewById(R.id.profilePictureViewGP);
 
@@ -169,7 +171,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 				case Picture:
 					if (imageView == null)
 					{
-						ViewGroup layout = (ViewGroup) view;
+						ViewGroup layout = (ViewGroup) view.findViewById(R.id.attachmentLayout);
 						imageView = new ImageView(getActivity());
 						layout.addView(imageView);
 					}
@@ -177,10 +179,12 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 					imageView.setVisibility(View.VISIBLE);
 					break;
 				case Video:
+					showIsLoading(true);
 					if (videoView == null)
 					{
-						ViewGroup layout = (ViewGroup) view;
+						ViewGroup layout = (ViewGroup) view.findViewById(R.id.attachmentLayout);
 						videoView = new VideoView(getActivity());
+						videoView.setVisibility(View.GONE);
 						// videoView.setMediaController(new
 						// MediaController(getActivity()));
 						videoView.requestFocus();
@@ -203,19 +207,53 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 							{
 								mp.setLooping(true);
 								videoView.start();
-								Log.e(TAG, "ready");
 							}
 						});
 						layout.addView(videoView);
 					}
 
 					playVideoForPath(post.getAttachment().getFilePath());
-
-					videoView.setVisibility(View.VISIBLE);
 					break;
 				case Sound:
-					mediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(post.getAttachment().getFilePath()));
-					mediaPlayer.start();
+					showIsLoading(true);
+					final ImageView playPause = (ImageView) view.findViewById(R.id.playPauseImageView);
+					playPause.setImageResource(R.drawable.ic_pause);
+					new Thread(new Runnable() {
+
+						@Override
+						public void run()
+						{
+							mediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(post.getAttachment().getFilePath()));
+							mediaPlayer.setLooping(true);
+							mediaPlayer.start();
+							getActivity().runOnUiThread(new Runnable() {
+
+								@Override
+								public void run()
+								{
+									showIsLoading(false);
+									playPause.setVisibility(View.VISIBLE);
+								}
+							});
+						}
+					}).start();
+					playPause.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View view)
+						{
+							if (mediaPlayer.isPlaying())
+							{
+								mediaPlayer.pause();
+								playPause.setImageResource(R.drawable.ic_play);
+							}
+							else
+							{
+								mediaPlayer.start();
+								playPause.setImageResource(R.drawable.ic_pause);
+							}
+						}
+					});
 					break;
 				default:
 					break;
@@ -235,6 +273,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 		postContent.setText("");
 
 		view.findViewById(R.id.addComment).setVisibility(View.GONE);
+		view.findViewById(R.id.playPauseImageView).setVisibility(View.GONE);
 
 		ProfilePictureView userImageViewFB = (ProfilePictureView) view.findViewById(R.id.profilePictureViewFB);
 		RoundedImageView userImageViewGP = (RoundedImageView) view.findViewById(R.id.profilePictureViewGP);
@@ -315,8 +354,9 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 			public void run()
 			{
 				videoView.setVideoPath(path);
-				// videoView.start();
 				videoView.requestFocus();
+				videoView.setVisibility(View.VISIBLE);
+				showIsLoading(true);
 			}
 		});
 	}
@@ -352,5 +392,14 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 		{
 
 		}
+	}
+
+	private void showIsLoading(boolean show)
+	{
+		if (show)
+			view.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+		else
+			view.findViewById(R.id.progressBar).setVisibility(View.GONE);
+
 	}
 }
