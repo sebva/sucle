@@ -3,12 +3,10 @@ package ch.hearc.android.sucle.view;
 import java.util.Date;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import ch.hearc.android.sucle.DownloadImageTask;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Sucle;
 import ch.hearc.android.sucle.controller.PostsManager;
@@ -58,8 +56,7 @@ public class PostInfoWindowAdapter implements InfoWindowAdapter
 			switch (post.getAttachment().getAttachementType())
 			{
 				case Picture:
-					Bitmap image = (Bitmap) post.getAttachment().getContent();
-					attachmentImageView.setImageBitmap(image);
+					post.getAttachment().loadImage(attachmentImageView);
 					break;
 				case Video:
 					attachmentImageView.setImageResource(android.R.drawable.ic_media_play);
@@ -87,7 +84,7 @@ public class PostInfoWindowAdapter implements InfoWindowAdapter
 			case GooglePlus:
 				userImageViewFB.setVisibility(View.GONE);
 				userImageViewGP.setVisibility(View.VISIBLE);
-				new DownloadImageTask(userImageViewGP).execute(post.getUser().getImageUrl());
+				userImageViewGP.setImageBitmap(post.getUser().getImage());
 				break;
 
 			default:

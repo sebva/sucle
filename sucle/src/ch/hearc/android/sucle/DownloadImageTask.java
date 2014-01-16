@@ -7,14 +7,17 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
+import ch.hearc.android.sucle.model.Attachment;
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
 {
-	private ImageView	bmImage;
+	private ImageView	imageView;
+	private Attachment	attachment;
 
-	public DownloadImageTask(ImageView bmImage)
+	public DownloadImageTask(ImageView imageView, Object attachment)
 	{
-		this.bmImage = bmImage;
+		this.imageView = imageView;
+		if (attachment != null) this.attachment = (Attachment) attachment;
 	}
 
 	protected Bitmap doInBackground(String... urls)
@@ -36,6 +39,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
 
 	protected void onPostExecute(Bitmap result)
 	{
-		bmImage.setImageBitmap(result);
+		if (attachment != null) attachment.setContent(result);
+		imageView.setImageBitmap(result);
 	}
 }

@@ -9,7 +9,6 @@ import java.net.URLConnection;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
@@ -27,7 +26,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
-import ch.hearc.android.sucle.DownloadImageTask;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.controller.FetchCommentsTask.FetchCommentsListener;
 import ch.hearc.android.sucle.controller.PostsManager;
@@ -150,7 +148,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 			case GooglePlus:
 				userImageViewFB.setVisibility(View.GONE);
 				userImageViewGP.setVisibility(View.VISIBLE);
-				new DownloadImageTask(userImageViewGP).execute(post.getUser().getImageUrl());
+				userImageViewGP.setImageBitmap(post.getUser().getImage());
 				break;
 
 			default:
@@ -175,7 +173,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 						imageView = new ImageView(getActivity());
 						layout.addView(imageView);
 					}
-					imageView.setImageBitmap((Bitmap) post.getAttachment().getContent());
+					post.getAttachment().loadImage(imageView);
 					imageView.setVisibility(View.VISIBLE);
 					break;
 				case Video:

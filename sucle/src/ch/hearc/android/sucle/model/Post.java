@@ -101,25 +101,25 @@ public class Post implements Serializable
 	{
 		return parent;
 	}
-	
+
 	@Override
 	public String toString()
 	{
 		return "(" + position.latitude + ";" + position.longitude + ") " + time + " " + user + " " + attachment + " " + message;
 	}
-	
+
 	@Override
 	public int hashCode()
 	{
 		return id;
 	}
-	
+
 	@Override
 	public boolean equals(Object o)
 	{
-		return id == ((Post)o).id;
+		return id == ((Post) o).id;
 	}
-	
+
 	public float distanceToPoint(double latitude, double longitude)
 	{
 		float[] results = new float[3];

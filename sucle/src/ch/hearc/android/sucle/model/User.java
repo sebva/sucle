@@ -1,6 +1,7 @@
 package ch.hearc.android.sucle.model;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
@@ -13,6 +14,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Sucle;
@@ -29,6 +32,7 @@ public class User implements Serializable
 	private String		name;
 	private PlusClient	client;
 	private String		imageUrl;
+	private Bitmap		image;
 
 	public User(String socialId, SocialType socialType, Date registration)
 	{
@@ -87,13 +91,13 @@ public class User implements Serializable
 				break;
 			case GooglePlus:
 				imageUrl = "https://plus.google.com/s2/photos/profile/" + socialId;// ?sz=<your_desired_size>
+				loadImage();
 				new Thread(new Runnable() {
 
 					@Override
 					public void run()
 					{
-						String url = "https://www.googleapis.com/plus/v1/people/" + socialId + "?fields=displayName&key="
-								+ Sucle.getAppContext().getResources().getString(R.string.google_api_key);
+						String url = "https://www.googleapis.com/plus/v1/people/" + socialId + "?fields=displayName&key=" + Sucle.getAppContext().getResources().getString(R.string.google_api_key);
 						StringBuilder json = new StringBuilder();
 						try
 						{
@@ -156,6 +160,34 @@ public class User implements Serializable
 		}
 	}
 
-	private static final String	TAG	= User.class.getSimpleName();
+	private void loadImage()
+	{
+		String path = Sucle.getAppContext().getCacheDir().getPath() + "/";
 
+		image = BitmapFactory.decodeFile(path + socialId);
+		if (image == null)
+		{
+			// If no file, we load it
+			try
+			{
+				InputStream in = new java.net.URL(imageUrl).openStream();
+				image = BitmapFactory.decodeStream(in);
+
+				FileOutputStream out = new FileOutputStream(path + socialId);
+				image.compress(Bitmap.CompressFormat.PNG, 90, out);
+				out.close();
+			}
+			catch (Exception exception)
+			{
+				Log.e("Error", exception.getMessage());
+			}
+		}
+	}
+
+	public Bitmap getImage()
+	{
+		return image;
+	}
+
+	private static final String	TAG	= User.class.getSimpleName();
 }
