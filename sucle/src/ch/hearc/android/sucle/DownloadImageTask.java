@@ -38,12 +38,14 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
 		    final BitmapFactory.Options options = new BitmapFactory.Options();
 		    options.inJustDecodeBounds = true;
 		    BitmapFactory.decodeStream(in, null, options);
+		    in.close();
 
 		    // Calculate inSampleSize
 		    options.inSampleSize = Tools.calculateInSampleSize(options, width, height);
 
 		    // Decode bitmap with inSampleSize set
 		    options.inJustDecodeBounds = false;
+		    in = new java.net.URL(urldisplay).openStream();
 		    mIcon11 = BitmapFactory.decodeStream(in, null, options);
 		}
 		catch (Exception e)
@@ -69,6 +71,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
 	protected void onPostExecute(Bitmap result)
 	{
 		if (attachment != null) attachment.setContent(result);
+		Log.i("NIGG", "LOADED OMG;");
 		imageView.setImageBitmap(result);
 	}
 }
