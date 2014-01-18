@@ -120,6 +120,4 @@ public class PostInfoWindowAdapter implements InfoWindowAdapter
 		return agoString;
 	}
 
-	private static final String	TAG	= PostInfoWindowAdapter.class.getSimpleName();
-
 }

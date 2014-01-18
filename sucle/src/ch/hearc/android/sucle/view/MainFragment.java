@@ -82,7 +82,7 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 
 	private void setActionBarListNavigation()
 	{
-		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.radius_tilte, android.R.layout.simple_spinner_dropdown_item);
+		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(getActivity().getActionBar().getThemedContext(), R.array.radius_tilte, android.R.layout.simple_spinner_dropdown_item);
 		getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, new OnNavigationListener() {
 			int[]	radius	= getResources().getIntArray(R.array.radius_values);

@@ -48,13 +48,12 @@ public class PostsAdapter extends ArrayAdapter<Post>
 					break;
 				case Video:
 					viewHolder.attachmentImageView.setImageResource(android.R.drawable.ic_media_play);
-					;
 					break;
 				case Sound:
 					viewHolder.attachmentImageView.setImageResource(R.drawable.ic_sound);
-					;
 					break;
 				default:
+					viewHolder.attachmentImageView.setImageResource(0);
 					break;
 			}
 			viewHolder.attachmentImageView.setVisibility(View.VISIBLE);

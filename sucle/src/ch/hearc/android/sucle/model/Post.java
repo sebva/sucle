@@ -15,6 +15,10 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class Post implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int			id;
 	private int			parent;
 	private User		user;
@@ -44,6 +48,7 @@ public class Post implements Serializable
 
 		out.writeDouble(position.latitude);
 		out.writeDouble(position.longitude);
+		out.writeUTF(positionName);
 
 		out.writeObject(time);
 		out.writeObject(attachment);
@@ -56,6 +61,7 @@ public class Post implements Serializable
 		user = (User) in.readObject();
 
 		position = new LatLng(in.readDouble(), in.readDouble());
+		positionName = in.readUTF();
 
 		time = (Date) in.readObject();
 		attachment = (Attachment) in.readObject();

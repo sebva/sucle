@@ -157,7 +157,12 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 			case R.id.action_logout:
 				if(mPlusClient.isConnected())
 					mPlusClient.revokeAccessAndDisconnect(this);
-				// TODO : Logout Facebook
+			//  FB logout
+				Session session = Session.getActiveSession();
+				if (session != null && session.isOpened())
+					session.closeAndClearTokenInformation();
+				
+				showFragment(SOCIAL_CONNECTION_FRAGMENT, false);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -340,6 +345,8 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 
 	private void loginToSucle(String id, String token, SocialType type)
 	{
+		PostsManager.getInstance().restorePosts();
+		
 		mToken = token;
 		String[] params = new String[6];
 		params[0] = id;
@@ -405,6 +412,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 	@Override
 	public void onDestroy()
 	{
+		PostsManager.getInstance().savePosts();
 		super.onDestroy();
 		uiHelper.onDestroy();
 	}

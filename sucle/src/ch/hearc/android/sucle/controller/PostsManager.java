@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -64,8 +63,8 @@ public class PostsManager
 			BufferedInputStream bis = new BufferedInputStream(fis);
 			ObjectInputStream ois = new ObjectInputStream(bis);
 
-			posts = new ArrayList<Post>();
-			posts.addAll(Arrays.asList((Post[]) ois.readObject()));
+			this.addNewPosts((Post[]) ois.readObject());
+			Log.i(TAG, "Posts restored");
 
 			ois.close();
 			bis.close();
@@ -83,13 +82,17 @@ public class PostsManager
 
 	public void savePosts()
 	{
+		Log.i(TAG, "Saving posts...");
+		
 		try
 		{
 			FileOutputStream fos = Sucle.getAppContext().openFileOutput(FILE, Context.MODE_PRIVATE);
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			ObjectOutputStream oos = new ObjectOutputStream(bos);
 
-			oos.writeObject(posts);
+			Post[] postsA = new Post[posts.size()];
+			posts.toArray(postsA);
+			oos.writeObject(postsA);
 
 			oos.close();
 			bos.close();

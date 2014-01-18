@@ -27,7 +27,7 @@ public class Attachment implements Serializable
 	public void loadImage(ImageView imageView)
 	{
 		if (content == null)
-			new DownloadImageTask(imageView, this).execute(filePath);
+			new DownloadImageTask(imageView, this, imageView.getWidth(), imageView.getHeight()).execute(filePath);
 		else
 			imageView.setImageBitmap((Bitmap) content);
 	}

@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import ch.hearc.android.sucle.R;
+import ch.hearc.android.sucle.Tools;
 import ch.hearc.android.sucle.controller.SendMessageTask;
 
 public class NewMessageActivity extends Activity
@@ -50,7 +51,7 @@ public class NewMessageActivity extends Activity
 	private TextView mGeocodeTextView;
 	private ImageView mImageView;
 	private String mCurrentPath;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -58,25 +59,25 @@ public class NewMessageActivity extends Activity
 		setContentView(R.layout.activity_new_message);
 		// Show the Up button in the action bar.
 		setupActionBar();
-		
+
 		setTitle(R.string.new_message);
 		mMessage = (EditText) findViewById(R.id.message_text);
 		mGeocodeTextView = (TextView) findViewById(R.id.geocodeTextView);
 		mImageView = (ImageView) findViewById(R.id.imageView);
-		
+
 		mLocation = getIntent().getParcelableExtra("location");
 		mToken = getIntent().getStringExtra("token");
 		mDeviceId = getIntent().getStringExtra("deviceId");
 		mParentMessageId = getIntent().getIntExtra("parent", -1);
-		
+
 		NumberFormat format = NumberFormat.getNumberInstance();
 		format.setMaximumFractionDigits(5);
-		mGeocodeTextView.setText(getResources().getString(R.string.sent_from) + " " + 
-				format.format(mLocation.getLatitude()) + ", " + format.format(mLocation.getLongitude()));
-		
+		mGeocodeTextView.setText(getResources().getString(R.string.sent_from) + " " + format.format(mLocation.getLatitude()) + ", "
+				+ format.format(mLocation.getLongitude()));
+
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.showSoftInput(mMessage, InputMethodManager.SHOW_IMPLICIT);
-		
+
 		new AsyncTask<Double, Void, String>()
 		{
 
@@ -87,10 +88,10 @@ public class NewMessageActivity extends Activity
 				{
 					Address address = new Geocoder(NewMessageActivity.this).getFromLocation(params[0], params[1], 1).get(0);
 					int nbLines = address.getMaxAddressLineIndex();
-					if(nbLines > 0)
+					if (nbLines > 0)
 					{
 						String[] str = new String[nbLines];
-						for(int i = 0; i < nbLines; i++)
+						for (int i = 0; i < nbLines; i++)
 							str[i] = address.getAddressLine(i);
 						return TextUtils.join(", ", str);
 					}
@@ -107,7 +108,7 @@ public class NewMessageActivity extends Activity
 					return null;
 				}
 			}
-			
+
 			@Override
 			protected void onPostExecute(String result)
 			{
@@ -130,25 +131,25 @@ public class NewMessageActivity extends Activity
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.new_message, menu);
-		if(mParentMessageId != -1)
+		if (mParentMessageId != -1)
 			menu.findItem(R.id.action_attach_file).setVisible(false);
-		
+
 		mCounterTextView = (TextView) menu.findItem(R.id.char_counter).getActionView();
 		mCounterTextView.setText(String.valueOf(MAX_CHARS));
 		mMessage.addTextChangedListener(new TextWatcher()
 		{
-			
+
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count)
 			{
 				mCounterTextView.setText(String.valueOf(MAX_CHARS - mMessage.getText().length()));
 			}
-			
+
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after)
 			{
 			}
-			
+
 			@Override
 			public void afterTextChanged(Editable s)
 			{
@@ -229,89 +230,103 @@ public class NewMessageActivity extends Activity
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == RESULT_LOAD_MEDIA && resultCode == RESULT_OK && null != data)
 		{
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
-            Cursor cursor = getContentResolver().query(selectedImage,filePathColumn, null, null, null);
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            mFilePath = cursor.getString(columnIndex);
-            cursor.close();
-            
-            Uri uri = data.getData();
-            List<String> pathSegments = uri.getPathSegments();
-			if(pathSegments.contains("audio"))
+			Uri selectedImage = data.getData();
+			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+			Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+			cursor.moveToFirst();
+			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+			mFilePath = cursor.getString(columnIndex);
+			cursor.close();
+
+			Uri uri = data.getData();
+			List<String> pathSegments = uri.getPathSegments();
+			if (pathSegments.contains("audio"))
 				mImageView.setImageResource(R.drawable.ic_sound);
-			else if(pathSegments.contains("video"))
+			else if (pathSegments.contains("video"))
 				mImageView.setImageResource(android.R.drawable.ic_media_play);
 			else
-				mImageView.setImageURI(uri);
-        }
+			{
+				// First decode with inJustDecodeBounds=true to check dimensions
+				final BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inJustDecodeBounds = true;
+				BitmapFactory.decodeFile(mFilePath, options);
+
+				// Calculate inSampleSize
+				options.inSampleSize = Tools.calculateInSampleSize(options, mImageView.getWidth(), mImageView.getHeight());
+
+				// Decode bitmap with inSampleSize set
+				options.inJustDecodeBounds = false;
+				mImageView.setImageBitmap(BitmapFactory.decodeFile(mFilePath, options));
+			}
+		}
 		else if (requestCode == RESULT_CAPTURE_MEDIA && resultCode == RESULT_OK)
 		{
-            mFilePath = mCurrentPath;
-			if(mFilePath.endsWith(".jpg"))
-				mImageView.setImageBitmap(BitmapFactory.decodeFile(mCurrentPath));
+			mFilePath = mCurrentPath;
+			if (mFilePath.endsWith(".jpg"))
+			{
+				// First decode with inJustDecodeBounds=true to check dimensions
+				final BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inJustDecodeBounds = true;
+				BitmapFactory.decodeFile(mCurrentPath, options);
+
+				// Calculate inSampleSize
+				options.inSampleSize = Tools.calculateInSampleSize(options, mImageView.getWidth(), mImageView.getHeight());
+
+				// Decode bitmap with inSampleSize set
+				options.inJustDecodeBounds = false;
+				mImageView.setImageBitmap(BitmapFactory.decodeFile(mCurrentPath, options));
+			}
 			else
-	        	mImageView.setImageResource(android.R.drawable.ic_media_play);
-        }
+				mImageView.setImageResource(android.R.drawable.ic_media_play);
+		}
 	}
 
 	private File createImageFile() throws IOException
 	{
-	    // Create an image file name
-	    String timeStamp = SimpleDateFormat.getDateTimeInstance().format(new Date());
-	    String imageFileName = "JPEG_" + timeStamp + "_";
-	    File storageDir = Environment.getExternalStoragePublicDirectory(
-	            Environment.DIRECTORY_PICTURES);
-	    File image = File.createTempFile(
-	        imageFileName,  /* prefix */
-	        ".jpg",         /* suffix */
-	        storageDir      /* directory */
-	    );
+		// Create an image file name
+		String timeStamp = SimpleDateFormat.getDateTimeInstance().format(new Date());
+		String imageFileName = "JPEG_" + timeStamp + "_";
+		File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+		File image = File.createTempFile(imageFileName, /* prefix */
+				".jpg", /* suffix */
+				storageDir /* directory */
+		);
 
-	    // Save a file: path for use with ACTION_VIEW intents
-	    mCurrentPath = image.getAbsolutePath();
-	    return image;
+		// Save a file: path for use with ACTION_VIEW intents
+		mCurrentPath = image.getAbsolutePath();
+		return image;
 	}
-	
+
 	private File createVideoFile() throws IOException
 	{
-	    // Create an image file name
-	    String timeStamp = SimpleDateFormat.getDateTimeInstance().format(new Date());
-	    String videoFileName = "MOVIE_" + timeStamp + "_";
-	    File storageDir = Environment.getExternalStoragePublicDirectory(
-	            Environment.DIRECTORY_MOVIES);
-	    File video = File.createTempFile(
-	        videoFileName,  /* prefix */
-	        ".mp4",         /* suffix */
-	        storageDir      /* directory */
-	    );
+		// Create an image file name
+		String timeStamp = SimpleDateFormat.getDateTimeInstance().format(new Date());
+		String videoFileName = "MOVIE_" + timeStamp + "_";
+		File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+		File video = File.createTempFile(videoFileName, /* prefix */
+				".mp4", /* suffix */
+				storageDir /* directory */
+		);
 
-	    // Save a file: path for use with ACTION_VIEW intents
-	    mCurrentPath = video.getAbsolutePath();
-	    return video;
+		// Save a file: path for use with ACTION_VIEW intents
+		mCurrentPath = video.getAbsolutePath();
+		return video;
 	}
-	
+
 	private void postMessage()
 	{
-		if(mMessage.getText().length() <= 0)
+		if (mMessage.getText().length() <= 0)
 			return;
-		
-		new SendMessageTask().execute(
-				mToken,
-				mDeviceId,
-				mMessage.getText().toString(),
-				Double.toString(mLocation.getLatitude()),
-				Double.toString(mLocation.getLongitude()),
-				Integer.toString(mParentMessageId),
-				mFilePath);
+
+		new SendMessageTask().execute(mToken, mDeviceId, mMessage.getText().toString(), Double.toString(mLocation.getLatitude()),
+				Double.toString(mLocation.getLongitude()), Integer.toString(mParentMessageId), mFilePath);
 		finish();
 	}
 

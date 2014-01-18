@@ -1,23 +1,22 @@
 package ch.hearc.android.sucle.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
+import android.os.AsyncTask;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Sucle;
 import ch.hearc.android.sucle.WebServicesInfo;
-import ch.hearc.android.sucle.R.string;
-import ch.hearc.android.sucle.WebServicesInfo.JSONKey;
-import android.os.AsyncTask;
-import android.util.Log;
 
 public class SendMessageTask extends AsyncTask<Object, Void, Void>
 {
@@ -57,13 +56,13 @@ public class SendMessageTask extends AsyncTask<Object, Void, Void>
 		
 		if(filepath != null)
 			builder.addPart("file", new FileBody(new File(filepath)));
-		builder.addTextBody("token", token);
-		builder.addTextBody("device_id", device_id);
-		builder.addTextBody("message", message);
-		builder.addTextBody("lat", lat);
-		builder.addTextBody("lon", lon);
+		builder.addTextBody("token", token, ContentType.TEXT_PLAIN);
+		builder.addTextBody("device_id", device_id, ContentType.TEXT_PLAIN);
+		builder.addBinaryBody("message", message.getBytes(Charset.defaultCharset()));
+		builder.addTextBody("lat", lat, ContentType.TEXT_PLAIN);
+		builder.addTextBody("lon", lon, ContentType.TEXT_PLAIN);
 		if(!"-1".equals(parent))
-			builder.addTextBody("parent", parent);
+			builder.addTextBody("parent", parent, ContentType.TEXT_PLAIN);
 		try
 		{  
 			request.setEntity(builder.build());

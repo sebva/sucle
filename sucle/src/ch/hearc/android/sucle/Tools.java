@@ -1,22 +1,42 @@
 package ch.hearc.android.sucle;
 
-import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Bitmap;
+import android.content.pm.Signature;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.ImageView;
 
 public class Tools
 {
+	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight)
+	{
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth)
+		{
+
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+
+			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) > reqHeight && (halfWidth / inSampleSize) > reqWidth)
+			{
+				inSampleSize *= 2;
+			}
+		}
+
+		return inSampleSize;
+	}
+
 	public static String sha512(String base)
 	{
 		try
@@ -28,7 +48,8 @@ public class Tools
 			for (int i = 0; i < hash.length; i++)
 			{
 				String hex = Integer.toHexString(0xff & hash[i]);
-				if (hex.length() == 1) hexString.append('0');
+				if (hex.length() == 1)
+					hexString.append('0');
 				hexString.append(hex);
 			}
 

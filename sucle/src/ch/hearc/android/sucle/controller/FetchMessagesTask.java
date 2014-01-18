@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -124,8 +125,11 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 
 					if (attachmentType != AttachmentType.Undefined) attachment = new Attachment(null, attachmentType, filePath);
 
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+					sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+					
 					posts.add(new Post(Integer.valueOf(id), -1, user, new LatLng(Double.valueOf(object.getString(WebServicesInfo.JSONKey.MESSAGE_LAT)), Double.valueOf(object
-							.getString(WebServicesInfo.JSONKey.MESSAGE_LONG))), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(object
+							.getString(WebServicesInfo.JSONKey.MESSAGE_LONG))), sdf.parse(object
 							.getString(WebServicesInfo.JSONKey.MESSAGE_DATETIME)), attachment, object.getString(WebServicesInfo.JSONKey.MESSAGE_MESSAGE)));
 				}
 
