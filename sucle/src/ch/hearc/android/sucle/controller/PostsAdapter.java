@@ -39,12 +39,15 @@ public class PostsAdapter extends ArrayAdapter<Post>
 		viewHolder.postContent.setText(post.getMessage());
 		viewHolder.location.setText(post.getPositionName());
 		viewHolder.postDate.setText(ago(delta));
+		viewHolder.attachmentImageView.setImageDrawable(null);
 		if (post.getAttachment() != null)
 		{
+			viewHolder.attachmentImageView.setVisibility(View.VISIBLE);
 			switch (post.getAttachment().getAttachementType())
 			{
 				case Picture:
-					post.getAttachment().loadImage(viewHolder.attachmentImageView);
+					viewHolder.attachmentImageView.setImageResource(R.drawable.ic_camera);
+					//post.getAttachment().loadImage(viewHolder.attachmentImageView);
 					break;
 				case Video:
 					viewHolder.attachmentImageView.setImageResource(android.R.drawable.ic_media_play);
@@ -53,10 +56,9 @@ public class PostsAdapter extends ArrayAdapter<Post>
 					viewHolder.attachmentImageView.setImageResource(R.drawable.ic_sound);
 					break;
 				default:
-					viewHolder.attachmentImageView.setImageResource(0);
+					viewHolder.attachmentImageView.setVisibility(View.GONE);
 					break;
 			}
-			viewHolder.attachmentImageView.setVisibility(View.VISIBLE);
 		}
 		else
 		{

@@ -11,6 +11,12 @@ public class Attachment implements Serializable
 	private transient Object	content;
 	private AttachmentType		attachementType;
 	private String				filePath;
+	
+	public interface ImageViewInfo
+	{
+		public void onImageLoaded();
+	}
+	
 
 	public Attachment(Object content, AttachmentType attachementType, String filePath)
 	{
@@ -24,7 +30,7 @@ public class Attachment implements Serializable
 		return content;
 	}
 
-	public void loadImage(ImageView imageView)
+	public void loadImage(ImageView imageView, ImageViewInfo callback)
 	{
 		int width, height;
 		if(imageView.getWidth() != 0 || imageView.getHeight() != 0)
@@ -40,7 +46,7 @@ public class Attachment implements Serializable
 			if(content != null)
 				imageView.setImageBitmap((Bitmap) content);
 			
-			new DownloadImageTask(imageView, this, width, height).execute(filePath);
+			new DownloadImageTask(imageView, this, width, height, callback).execute(filePath);
 		}
 		else
 			imageView.setImageBitmap((Bitmap) content);

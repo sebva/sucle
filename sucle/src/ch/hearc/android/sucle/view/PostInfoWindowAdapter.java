@@ -56,7 +56,7 @@ public class PostInfoWindowAdapter implements InfoWindowAdapter
 			switch (post.getAttachment().getAttachementType())
 			{
 				case Picture:
-					post.getAttachment().loadImage(attachmentImageView);
+					attachmentImageView.setImageResource(R.drawable.ic_camera);
 					break;
 				case Video:
 					attachmentImageView.setImageResource(android.R.drawable.ic_media_play);

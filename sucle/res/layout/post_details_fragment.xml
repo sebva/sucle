@@ -11,19 +11,19 @@
 
         <ch.hearc.android.sucle.view.ProfilePictureView
             android:id="@+id/profilePictureViewFB"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="15dp"
+            android:layout_margin="5dp"
             android:visibility="gone" >
         </ch.hearc.android.sucle.view.ProfilePictureView>
 
         <ch.hearc.android.sucle.view.RoundedImageView
             android:id="@+id/profilePictureViewGP"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="15dp"
+            android:layout_margin="5dp"
             android:visibility="gone" />
 
         <TextView
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 
@@ -75,6 +75,7 @@
         android:id="@+id/addComment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="3dp"
         android:layout_gravity="center_horizontal"
         android:background="@color/green"
         android:text="@string/add_comment"

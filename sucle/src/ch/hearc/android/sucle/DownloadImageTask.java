@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 import ch.hearc.android.sucle.model.Attachment;
+import ch.hearc.android.sucle.model.Attachment.ImageViewInfo;
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
 {
@@ -16,13 +17,15 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
 	private Attachment	attachment;
 	private int width;
 	private int height;
+	private ImageViewInfo callback;
 	
-	public DownloadImageTask(ImageView imageView, Attachment attachment, int width, int height)
+	public DownloadImageTask(ImageView imageView, Attachment attachment, int width, int height, ImageViewInfo callback)
 	{
 		this.imageView = imageView;
 		this.attachment = attachment;
 		this.width = width;
 		this.height = height;
+		this.callback = callback;
 	}
 
 	protected Bitmap doInBackground(String... urls)
@@ -71,7 +74,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
 	protected void onPostExecute(Bitmap result)
 	{
 		if (attachment != null) attachment.setContent(result);
-		Log.i("NIGG", "LOADED OMG;");
+		if(callback != null) callback.onImageLoaded();
 		imageView.setImageBitmap(result);
 	}
 }
