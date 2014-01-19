@@ -55,6 +55,7 @@ class DataBase
         $distances = array();
         $i = 0;
         $settings = Settings::getSettings();
+
         if(is_array($data))
         {
             foreach($data as $d)
@@ -118,7 +119,7 @@ class DataBase
         if($message->getFile() != null)
         {
             $folder = $settings[Settings::UPLOAD].$message->getUser()->getId().'/';
-            if(!file_exists($folder))
+            if(!file_exists(getenv('OPENSHIFT_DATA_DIR').$folder))
                 mkdir(getenv('OPENSHIFT_DATA_DIR').$folder, 0730, true);
 
             $msg_file = $message->getFile();
