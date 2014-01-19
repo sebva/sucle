@@ -104,7 +104,7 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 		mapDisplayed = true;
 		hide(R.id.timelineFragment);
 		show(R.id.mapFragment);
-		((MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment)).showMap();
+		((MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment)).showMap(true);
 	}
 
 	public void changeToTimeline()

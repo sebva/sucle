@@ -51,19 +51,56 @@ public class MapFragment extends Fragment
 		return view;
 	}
 
-	public void showMap()
+	public void showMap(boolean forReal)
 	{
 		Location location = PostsManager.getInstance().getLocation();
 		if (location != null)
 		{
-			com.google.android.gms.maps.MapFragment mapFragment = ((com.google.android.gms.maps.MapFragment) getFragmentManager().findFragmentById(R.id.map));
-			GoogleMap map = mapFragment.getMap();
-			LatLng center = new LatLng(location.getLatitude(), location.getLongitude());
-			DisplayMetrics metrics = getResources().getDisplayMetrics();
+			final com.google.android.gms.maps.MapFragment mapFragment = ((com.google.android.gms.maps.MapFragment) getFragmentManager().findFragmentById(R.id.map));
+			final GoogleMap map = mapFragment.getMap();
+			final LatLng center = new LatLng(location.getLatitude(), location.getLongitude());
+			final DisplayMetrics metrics = getResources().getDisplayMetrics();
+
 			float mapWidth = mapFragment.getView().getWidth() / metrics.scaledDensity;
-			double zoom = getZoomForMetersWide(PostsManager.getInstance().getRadius() * 3, mapWidth, center.latitude);
-			map.animateCamera(CameraUpdateFactory.newLatLngZoom(center, (float) zoom));
+
+			if (mapWidth > 0D)
+				zoomOnLocation(map, mapWidth, center);
+			else if(forReal)
+			{
+				new Thread(new Runnable() {
+
+					@Override
+					public void run()
+					{
+						int fragmentWidth;
+						do
+						{
+							if(mapFragment.getView() == null) return;
+							fragmentWidth = mapFragment.getView().getWidth();
+						} while (fragmentWidth <= 0);
+						getActivity().runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run()
+							{
+								zoomOnLocation(map, mapFragment.getView().getWidth() / metrics.scaledDensity, center);								
+							}
+						});
+					}
+				}).start();;
+			}
+
 		}
+	}
+
+	/**
+	 * @param map
+	 * @param center
+	 */
+	private void zoomOnLocation(GoogleMap map, float mapWidth, LatLng center)
+	{
+		double zoom = getZoomForMetersWide(PostsManager.getInstance().getRadius() * 3, mapWidth, center.latitude);
+		map.animateCamera(CameraUpdateFactory.newLatLngZoom(center, (float) zoom));
 	}
 
 	private void addCircle()
@@ -82,7 +119,7 @@ public class MapFragment extends Fragment
 			LatLng center = new LatLng(location.getLatitude(), location.getLongitude());
 			circle.setCenter(center);
 			circle.setRadius(PostsManager.getInstance().getRadius());
-			showMap();
+			showMap(false);
 		}
 	}
 
