@@ -14,12 +14,14 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,6 +31,7 @@ import android.widget.VideoView;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.controller.FetchCommentsTask.FetchCommentsListener;
 import ch.hearc.android.sucle.controller.PostsManager;
+import ch.hearc.android.sucle.model.Attachment.ImageViewInfo;
 import ch.hearc.android.sucle.model.Post;
 
 public class PostDetailsFragment extends Fragment implements FetchCommentsListener
@@ -121,9 +124,10 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 			return;
 		}
 		if (position == currentPosition) return;
+		
+		cleanView();
+		
 		currentPosition = position;
-
-		((LinearLayout) (view.findViewById(R.id.commentsFragment))).removeAllViews();
 
 		post = PostsManager.getInstance().getPosts().get(position);
 
@@ -166,6 +170,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 
 		if (post.getAttachment() != null)
 		{
+			showIsLoading(true);
 			switch (post.getAttachment().getAttachementType())
 			{
 				case Picture:
@@ -173,13 +178,22 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 					{
 						ViewGroup layout = (ViewGroup) view.findViewById(R.id.attachmentLayout);
 						imageView = new ImageView(getActivity());
+						android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 300);
+						layoutParams.gravity = Gravity.CENTER;
+						imageView.setLayoutParams(layoutParams);
 						layout.addView(imageView);
 					}
-					post.getAttachment().loadImage(imageView);
+					post.getAttachment().loadImage(imageView, new ImageViewInfo() {
+						
+						@Override
+						public void onImageLoaded()
+						{
+							showIsLoading(false);
+						}
+					});
 					imageView.setVisibility(View.VISIBLE);
 					break;
 				case Video:
-					showIsLoading(true);
 					if (videoView == null)
 					{
 						ViewGroup layout = (ViewGroup) view.findViewById(R.id.attachmentLayout);
@@ -215,7 +229,6 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 					playVideoForPath(post.getAttachment().getFilePath());
 					break;
 				case Sound:
-					showIsLoading(true);
 					final ImageView playPause = (ImageView) view.findViewById(R.id.playPauseImageView);
 					playPause.setImageResource(R.drawable.ic_pause);
 					new Thread(new Runnable() {
@@ -224,6 +237,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 						public void run()
 						{
 							mediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(post.getAttachment().getFilePath()));
+							if(mediaPlayer == null) return;
 							mediaPlayer.setLooping(true);
 							mediaPlayer.start();
 							getActivity().runOnUiThread(new Runnable() {
@@ -294,6 +308,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 			{
 				mediaPlayer.stop();
 				mediaPlayer.release();
+				mediaPlayer.reset();
 			}
 		}
 		catch (Exception e)
@@ -348,6 +363,8 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 
 	private void playVideo(final String path)
 	{
+		// The fragment is no longer displayed 
+		if(getActivity() == null) return;
 		getActivity().runOnUiThread(new Runnable() {
 
 			@Override
@@ -356,6 +373,9 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 				videoView.setVideoPath(path);
 				videoView.requestFocus();
 				videoView.setVisibility(View.VISIBLE);
+				android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 300);
+				layoutParams.gravity = Gravity.CENTER;
+				videoView.setLayoutParams(layoutParams);
 				showIsLoading(false);
 			}
 		});
