@@ -55,6 +55,7 @@ public class CommentFragment extends Fragment
 			case GooglePlus:
 				userImageViewFB.setVisibility(View.GONE);
 				userImageViewGP.setVisibility(View.VISIBLE);
+				userImageViewGP.setImageBitmap(post.getUser().getImage());/*
 				int width, height;
 				if(userImageViewGP.getWidth() != 0 || userImageViewGP.getHeight() != 0)
 				{
@@ -63,7 +64,7 @@ public class CommentFragment extends Fragment
 				}
 				else
 					width = height = 350;
-				new DownloadImageTask(userImageViewGP, null, width, height).execute(post.getUser().getImageUrl());
+				new DownloadImageTask(userImageViewGP, null, width, height).execute(post.getUser().getImageUrl());*/
 				break;
 
 			default:
