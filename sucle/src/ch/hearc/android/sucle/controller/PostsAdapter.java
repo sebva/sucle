@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import ch.hearc.android.sucle.R;
+import ch.hearc.android.sucle.Tools;
 import ch.hearc.android.sucle.model.Post;
 import ch.hearc.android.sucle.view.ProfilePictureView;
 import ch.hearc.android.sucle.view.RoundedImageView;
@@ -38,7 +39,7 @@ public class PostsAdapter extends ArrayAdapter<Post>
 		viewHolder.username.setText(post.getUser().getName());
 		viewHolder.postContent.setText(post.getMessage());
 		viewHolder.location.setText(post.getPositionName());
-		viewHolder.postDate.setText(ago(delta));
+		viewHolder.postDate.setText(Tools.ago(delta));
 		viewHolder.attachmentImageView.setImageDrawable(null);
 		if (post.getAttachment() != null)
 		{
@@ -83,32 +84,6 @@ public class PostsAdapter extends ArrayAdapter<Post>
 		}
 
 		return view;
-	}
-
-	public static String ago(long ago)
-	{
-		String agoString;
-		if (ago < 1000)
-		{
-			agoString = ago + "ms ago";
-		}
-		else if (ago / 1000 < 60)
-		{
-			agoString = ago / 1000 + "sec ago";
-		}
-		else if (ago / 1000 / 60 < 60)
-		{
-			agoString = ago / 1000 / 60 + "min ago";
-		}
-		else if (ago / 1000 / 60 / 60 < 24)
-		{
-			agoString = ago / 1000 / 60 / 60 + "hours ago";
-		}
-		else
-		{
-			agoString = ago / 1000 / 60 / 60 / 24 + "days ago";
-		}
-		return agoString;
 	}
 
 	private View getWorkingView(View convertView)

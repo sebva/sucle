@@ -8,9 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import ch.hearc.android.sucle.DownloadImageTask;
 import ch.hearc.android.sucle.R;
-import ch.hearc.android.sucle.controller.PostsAdapter;
+import ch.hearc.android.sucle.Tools;
 import ch.hearc.android.sucle.model.Post;
 
 public class CommentFragment extends Fragment
@@ -43,7 +42,7 @@ public class CommentFragment extends Fragment
 		username.setText(post.getUser().getName());
 		postContent.setText(post.getMessage());
 		location.setText(post.getPositionName());
-		postDate.setText(PostsAdapter.ago(delta));
+		postDate.setText(Tools.ago(delta));
 
 		switch (post.getUser().getSocialType())
 		{
