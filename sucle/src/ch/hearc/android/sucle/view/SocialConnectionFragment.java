@@ -5,10 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-
 import ch.hearc.android.sucle.R;
-import ch.hearc.android.sucle.R.id;
-import ch.hearc.android.sucle.R.layout;
 
 import com.google.android.gms.common.SignInButton;
 

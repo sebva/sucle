@@ -70,13 +70,9 @@ public class PostsManager
 			bis.close();
 			fis.close();
 		}
-		catch (FileNotFoundException e)
-		{
-			Log.i(TAG, "No messages were restored (FileNotFoundException)");
-		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			Log.i(TAG, "No messages were restored " + e.getMessage());
 		}
 	}
 

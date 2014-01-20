@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Sucle;
+import ch.hearc.android.sucle.Tools;
 import ch.hearc.android.sucle.controller.PostsManager;
 import ch.hearc.android.sucle.model.Post;
 
@@ -17,8 +18,8 @@ import com.google.android.gms.maps.model.Marker;
 
 public class PostInfoWindowAdapter implements InfoWindowAdapter
 {
-	private View	view;
-
+	private View view;
+	
 	public PostInfoWindowAdapter(Context context)
 	{
 		LayoutInflater inflater = LayoutInflater.from(context);
@@ -50,7 +51,7 @@ public class PostInfoWindowAdapter implements InfoWindowAdapter
 		username.setText(post.getUser().getName());
 		postContent.setText(post.getMessage());
 		location.setText(post.getPositionName());
-		postDate.setText(ago(delta));
+		postDate.setText(Tools.ago(delta));
 		if (post.getAttachment() != null)
 		{
 			switch (post.getAttachment().getAttachementType())
@@ -93,31 +94,4 @@ public class PostInfoWindowAdapter implements InfoWindowAdapter
 
 		return view;
 	}
-
-	private static String ago(long ago)
-	{
-		String agoString;
-		if (ago < 1000)
-		{
-			agoString = ago + "ms ago";
-		}
-		else if (ago / 1000 < 60)
-		{
-			agoString = ago / 1000 + "sec ago";
-		}
-		else if (ago / 1000 / 60 < 60)
-		{
-			agoString = ago / 1000 / 60 + "min ago";
-		}
-		else if (ago / 1000 / 60 / 60 < 24)
-		{
-			agoString = ago / 1000 / 60 / 60 + "hours ago";
-		}
-		else
-		{
-			agoString = ago / 1000 / 60 / 60 / 24 + "days ago";
-		}
-		return agoString;
-	}
-
 }

@@ -1,23 +1,13 @@
 package ch.hearc.android.sucle.model;
 
-import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.Date;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONObject;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import ch.hearc.android.sucle.R;
 import ch.hearc.android.sucle.Sucle;
 
 import com.facebook.Request;

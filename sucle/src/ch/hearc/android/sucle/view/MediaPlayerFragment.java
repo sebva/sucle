@@ -1,8 +1,5 @@
 package ch.hearc.android.sucle.view;
 
-import ch.hearc.android.sucle.R;
-import ch.hearc.android.sucle.R.id;
-import ch.hearc.android.sucle.R.layout;
 import android.app.Fragment;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
@@ -12,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.VideoView;
+import ch.hearc.android.sucle.R;
 
 public class MediaPlayerFragment extends Fragment
 {
