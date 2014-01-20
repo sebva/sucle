@@ -95,8 +95,11 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 		{
 			transaction.hide(fragments[i]);
 		}
+		transaction.show(fragments[SOCIAL_CONNECTION_FRAGMENT]);
 		transaction.commit();
 
+		
+		
 		mLocationRequest = LocationRequest.create();
 		mLocationRequest.setInterval(60000);
 		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -115,6 +118,11 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 			}
 		};
 		mLocationClient = new LocationClient(this, connectionCallbacks, this);
+
+		/*currentLocation = new Location("dummyprovider");
+		currentLocation.setLatitude(47.0393);
+		currentLocation.setLongitude(6.7995);
+		PostsManager.getInstance().onLocationChanged(currentLocation);*/
 	}
 
 	@Override
@@ -155,13 +163,11 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 				startActivity(intent);
 				return true;
 			case R.id.action_logout:
-				if(mPlusClient.isConnected())
-					mPlusClient.revokeAccessAndDisconnect(this);
-			//  FB logout
+				if (mPlusClient.isConnected()) mPlusClient.revokeAccessAndDisconnect(this);
+				// FB logout
 				Session session = Session.getActiveSession();
-				if (session != null && session.isOpened())
-					session.closeAndClearTokenInformation();
-				
+				if (session != null && session.isOpened()) session.closeAndClearTokenInformation();
+
 				showFragment(SOCIAL_CONNECTION_FRAGMENT, false);
 				return true;
 			default:
@@ -173,16 +179,21 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 	protected void onStart()
 	{
 		super.onStart();
-		mPlusClient.connect();
-		mLocationClient.connect();
+		if(onConnectionView)
+		{
+			mPlusClient.connect();
+			mLocationClient.connect();
+		}
 	}
 
 	@Override
 	protected void onStop()
 	{
 		super.onStop();
-		mPlusClient.disconnect();
-		mLocationClient.disconnect();
+		{
+			mPlusClient.disconnect();
+			mLocationClient.disconnect();
+		}
 	}
 
 	@Override
@@ -300,15 +311,18 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 	@Override
 	public void onLogin()
 	{
-		showFragment(MAIN_FRAGMENT, false);
+		if(onConnectionView)
+		{
+			showFragment(MAIN_FRAGMENT, false);
+		}
+		((MainFragment)fragments[MAIN_FRAGMENT]).started();
 		dismissOnLoginDialog();
 	}
 
 	private void onSessionStateChange(final Session session, SessionState state, Exception exception)
 	{
-		showOnLoginDialog();
 		// Only make changes if the activity is visible
-		if (isResumed)
+		if (isResumed && onConnectionView)
 		{
 			FragmentManager manager = getFragmentManager();
 			// Get the number of entries in the back stack
@@ -320,6 +334,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 			}
 			if (state.isOpened())
 			{
+				showOnLoginDialog();
 				// If the session state is open:
 				// Show the authenticated fragment
 				Request.newMeRequest(session, new Request.GraphUserCallback() {
@@ -346,7 +361,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 	private void loginToSucle(String id, String token, SocialType type)
 	{
 		PostsManager.getInstance().restorePosts();
-		
+
 		mToken = token;
 		String[] params = new String[6];
 		params[0] = id;
@@ -364,23 +379,13 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 	{
 		super.onResume();
 
-		Session session = Session.getActiveSession();
-
-		if (session != null && session.isOpened())
+		if (onConnectionView)
 		{
-			// if the session is already open,
-			// try to show the selection fragment
-			showFragment(MAIN_FRAGMENT, false);
+			Session session = Session.getActiveSession();
+			uiHelper.onResume();
+			isResumed = true;
+			onSessionStateChange(session, session.getState(), null);
 		}
-		else
-		{
-			// otherwise present the splash screen
-			// and ask the person to login.
-			showFragment(SOCIAL_CONNECTION_FRAGMENT, false);
-		}
-
-		uiHelper.onResume();
-		isResumed = true;
 	}
 
 	@Override
@@ -394,6 +399,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
+		Log.e(TAG, "onActivityResult");
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUEST_CODE)
 		{

@@ -46,7 +46,6 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 	public void onStart()
 	{
 		super.onStart();
-		PostsManager.getInstance().setListenerMessage(this);
 	}
 
 	@Override
@@ -54,16 +53,11 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 	{
 		super.onResume();
 		if (realStart)
-			getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		{
+			started();
+		}
 		else
 			realStart = true;
-		try
-		{
-			PostsManager.getInstance().getNearbyPosts();
-		}
-		catch (Exception e)
-		{
-		}
 	}
 
 	@Override
@@ -160,6 +154,20 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 			transaction.addToBackStack(null);
 
 			transaction.commit();
+		}
+	}
+
+	public void started()
+	{
+		PostsManager.getInstance().setListenerMessage(this);
+		getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+
+		try
+		{
+			PostsManager.getInstance().getNearbyPosts();
+		}
+		catch (Exception e)
+		{
 		}
 	}
 }

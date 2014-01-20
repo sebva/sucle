@@ -58,7 +58,7 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 	@Override
 	protected Post[] doInBackground(Object... params)
 	{
-		if (params.length != 3)
+		if (params.length != 4)
 		{
 			error = "Parameters length doesn't correspond ...";
 			return null;
@@ -67,7 +67,8 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 		Location location = (Location) params[0];
 		int radius = (Integer) params[1];
 		int nbMessage = (Integer) params[2];
-
+		List<Integer> postId = (ArrayList<Integer>)params[3];
+		
 		HttpClient httpclient = new DefaultHttpClient();
 		String getParameter = "?lat=" + location.getLatitude() + "&lon=" + location.getLongitude() + "&r=" + radius + "&nb=" + nbMessage;
 		HttpGet request = new HttpGet(WebServicesInfo.URL_GET_MESSAGE + getParameter);
@@ -99,6 +100,11 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 				for (int i = 0; i < jArray.length(); ++i)
 				{
 					JSONObject object = jArray.getJSONObject(i);
+					String id = object.getString(WebServicesInfo.JSONKey.MESSAGE_ID);
+					
+					if(postId.contains(Integer.parseInt(id)))
+						continue;
+					
 					SocialType socialType = SocialType.Undefined;
 
 					JSONObject userObject = object.getJSONObject(WebServicesInfo.JSONKey.MESSAGE_USER);
@@ -115,7 +121,7 @@ public class FetchMessagesTask extends AsyncTask<Object, Void, Post[]>
 					AttachmentType attachmentType = AttachmentType.Undefined;
 					String filePath = object.getString(WebServicesInfo.JSONKey.MESSAGE_FILE);
 					String mime = object.getString(WebServicesInfo.JSONKey.MESSAGE_MIME);
-					String id = object.getString(WebServicesInfo.JSONKey.MESSAGE_ID);
+					
 
 					if (WebServicesInfo.MIME_AUDIO.contains(mime))
 						attachmentType = AttachmentType.Sound;

@@ -32,7 +32,7 @@ public class PostsManager
 	private FetchMessagesListener	listenerMessage;
 	private FetchCommentsListener	listenerComment;
 
-	private static final int		BASE_RADIUS		= 100000;
+	private static final int		BASE_RADIUS		= 50;
 	private static final int		NUMBER_MESSAGES	= 100;
 	private static final String		FILE			= "posts";
 
@@ -108,17 +108,21 @@ public class PostsManager
 	{
 		if (listenerMessage == null || location == null) throw new NullPointerException("No listenerMessage set or no location");
 
-		Object[] params = new Object[3];
+		Object[] params = new Object[4];
 		params[0] = location;
 		params[1] = radius;
 		params[2] = nbMessage;
 
+		List<Integer> postId = new ArrayList<Integer>();
+		for(Post post :posts)
+			postId.add(post.getId());
+		params[3] = postId;
 		new FetchMessagesTask(listenerMessage, this).execute(params);
 	}
 
 	public void getComments(int id) throws NullPointerException
 	{
-		if (listenerComment == null) throw new NullPointerException("No listenerComment set");
+		if (listenerComment == null) return;
 		Object[] params = new Object[1];
 		params[0] = id;
 
@@ -167,7 +171,8 @@ public class PostsManager
 					i--;
 				}
 			}
-			listenerMessage.onPostsFetched();
+			if(listenerMessage != null)
+				listenerMessage.onPostsFetched();
 		}
 		else
 		{

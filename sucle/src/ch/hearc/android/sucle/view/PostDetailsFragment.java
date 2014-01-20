@@ -139,8 +139,6 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 
 		view.findViewById(R.id.addComment).setVisibility(View.VISIBLE);
 
-		view.findViewById(R.id.playPauseImageView).setVisibility(View.GONE);
-
 		ProfilePictureView userImageViewFB = (ProfilePictureView) view.findViewById(R.id.profilePictureViewFB);
 		RoundedImageView userImageViewGP = (RoundedImageView) view.findViewById(R.id.profilePictureViewGP);
 
@@ -163,11 +161,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 
 		profileName.setText(post.getUser().getName());
 		postContent.setText(post.getMessage());
-
-		if (imageView != null) imageView.setVisibility(View.GONE);
-		if (videoView != null) videoView.setVisibility(View.GONE);
-		stopSound();
-
+		
 		if (post.getAttachment() != null)
 		{
 			showIsLoading(true);
@@ -295,8 +289,14 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 		userImageViewGP.setVisibility(View.GONE);
 		userImageViewFB.setVisibility(View.GONE);
 
-		if (imageView != null) imageView.setVisibility(View.GONE);
-		if (videoView != null) videoView.setVisibility(View.GONE);
+		if (imageView != null) {
+			imageView.setImageDrawable(null);
+			imageView.setVisibility(View.GONE);
+		}
+		if (videoView != null) {
+			videoView.stopPlayback();
+			videoView.setVisibility(View.GONE);
+		}
 		stopSound();
 	}
 
