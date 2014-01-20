@@ -59,7 +59,7 @@ public class PostInfoWindowAdapter implements InfoWindowAdapter
 					attachmentImageView.setImageResource(R.drawable.ic_camera);
 					break;
 				case Video:
-					attachmentImageView.setImageResource(android.R.drawable.ic_media_play);
+					attachmentImageView.setImageResource(R.drawable.ic_video);
 					break;
 				case Sound:
 					attachmentImageView.setImageResource(R.drawable.ic_sound);

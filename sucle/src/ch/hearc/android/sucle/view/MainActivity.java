@@ -266,6 +266,7 @@ public class MainActivity extends Activity implements PlusClient.OnAccessRevoked
 	@Override
 	public void onConnected(Bundle connectionHint)
 	{
+		showOnLoginDialog();
 		getGoogleToken();
 	}
 

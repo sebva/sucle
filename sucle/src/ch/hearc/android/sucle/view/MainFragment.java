@@ -89,7 +89,6 @@ public class MainFragment extends Fragment implements TimelineFragment.OnPostSel
 				return false;
 			}
 		});
-		// getActivity().getActionBar().setSelectedNavigationItem(2);
 	}
 
 	public void changeToMap()

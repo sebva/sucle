@@ -50,7 +50,7 @@ public class PostsAdapter extends ArrayAdapter<Post>
 					//post.getAttachment().loadImage(viewHolder.attachmentImageView);
 					break;
 				case Video:
-					viewHolder.attachmentImageView.setImageResource(android.R.drawable.ic_media_play);
+					viewHolder.attachmentImageView.setImageResource(R.drawable.ic_video);
 					break;
 				case Sound:
 					viewHolder.attachmentImageView.setImageResource(R.drawable.ic_sound);

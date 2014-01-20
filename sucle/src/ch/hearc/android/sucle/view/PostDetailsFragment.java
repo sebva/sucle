@@ -234,6 +234,7 @@ public class PostDetailsFragment extends Fragment implements FetchCommentsListen
 							if(mediaPlayer == null) return;
 							mediaPlayer.setLooping(true);
 							mediaPlayer.start();
+							if(getActivity() == null) return;
 							getActivity().runOnUiThread(new Runnable() {
 
 								@Override
